@@ -9,6 +9,13 @@ class Map(GObject):
         self.neighboars = {} # neighboar maps (for coalescing)
         self.traversables = {}
 
+    @classmethod
+    def from_tiles(cls, tiles, events=(), zones=()):
+        levels = len(tiles)
+        height = len(tiles[0]) if levels else 0
+        width = len(tiles[0][0]) if height else 0
+        return cls((width, height, levels), tiles, events, zones)
+
     def can_move(self, x, y, z):
         if not (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles)):
             return False

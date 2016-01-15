@@ -11,22 +11,32 @@ pikachu = beast.BeastFamily('Pikachu', 'Electrik')
 pikagroup = zone.WildGroup(pikachu, 10) # group of 10 pikachus
 pikazone = zone.Zone('grass', [pikagroup])
 
-bourg_tiles = (
-    (
-        (tile.Grass(), tile.Grass(), tile.HighGrass(pikazone), tile.Grass(), tile.Grass()),
-        (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
-        (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
-        (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
-        (tile.Grass(), tile.Grass(), tile.Grass(), tile.Grass(), tile.Grass()),
-    ),
-) # event tiles are automatically put in bourg.events
-for z, level in enumerate(bourg_tiles):
-    for y, line in enumerate(level):
-        for x, tile in enumerate(line):
-            tile.x, tile.y, tile.z = x, y, z
+tile_chars = {
+    '.': tile.Grass,
+    '*': lambda: tile.HighGrass(pikazone),
+}
+bourg_tiles = []
+bourg_tiles.append("""
+..........
+....***...
+....***...
+....***...
+.....*....
+..........
+..........
+..........
+..........
+""")
+bourg_tiles = [
+    [
+        [tile_chars.get(t, tile.Tile)() for t in line]
+        for line in reversed(level.splitlines()) if line
+    ]
+    for level in bourg_tiles
+]
 bourg_events = (character.Character(), character.Trainer(), object.Object())
 bourg_zones = [pikazone]
-bourg = map.Map((5, 5, 1), bourg_tiles, bourg_events, bourg_zones)
+bourg = map.Map.from_tiles(bourg_tiles, bourg_events, bourg_zones)
 game.maps['bourg'] = bourg
 
 player = player.Player()

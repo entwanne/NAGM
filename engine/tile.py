@@ -5,6 +5,7 @@ class Tile(GObject):
     """All tiles ("voxels") on a map
     have some properties: traversable, etc.
     """
+    traversable = False
 
 class EventTile(Event, Tile):
     "Tiles that interact with player (stairs)"

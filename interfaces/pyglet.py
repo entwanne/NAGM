@@ -74,15 +74,15 @@ class _:
         tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(map.levels)]
         event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(map.levels)]
 
-        for level in map.tiles:
-            for line in level:
-                for tile in line:
+        for z, level in enumerate(map.tiles):
+            for y, line in enumerate(level):
+                for x, tile in enumerate(line):
                     if hasattr(tile, 'sprite'):
                         sprites.append(
                             pyglet.sprite.Sprite(
                                 tile.sprite,
-                                x=tile.x*16, y=(tile.y+tile.z)*16,
-                                batch=batch, group=tile_groups[tile.z])
+                                x=x*16, y=(y+z)*16,
+                                batch=batch, group=tile_groups[z])
                         )
 
         self.player.sprite = pyglet.sprite.Sprite(player_img, x=self.player.x*16, y=self.player.y*16, batch=batch, group=event_groups[0])
