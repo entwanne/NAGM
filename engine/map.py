@@ -1,14 +1,13 @@
 from .gobject import GObject
 
 class Map(GObject):
-    def __init__(self, width, height):
-        self.width, self.height = width, height
-        self.tiles = [] # map tiles (grounds)
-        self.events = [] # map events (objects, characters, event tiles, etc.)
-        self.zones = [] # map zones (battles are thrown by events)
+    def __init__(self, size, tiles=(), events=(), zones=()):
+        self.width, self.height, self.levels = size
+        self.tiles = tiles # map tiles (grounds)
+        self.events = events # map events (objects, characters, event tiles, etc.)
+        self.zones = zones # map zones (battles are thrown by events)
         self.neighboars = {} # neighboar maps (for coalescing)
         self.traversables = {}
-        self.levels = 0
 
     def can_move(self, x, y, z):
         if not (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles)):

@@ -10,6 +10,6 @@ class WildGroup(GObject):
 
 class Zone(GObject):
     "Beast zones (where battle can be thrown)"
-    def __init__(self, type):
+    def __init__(self, type, groups):
         self.type = type # grass, water, etc.
-        self.groups = [] # wild groups
+        self.groups = groups # wild groups

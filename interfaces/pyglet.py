@@ -19,19 +19,32 @@ import engine.meta
 
 @engine.meta.register('engine.player.Player')
 class _:
+    def __init__(self, *args, **kwargs):
+        self._map = None
+        super().__init__(*args, **kwargs)
+
     def move(self, *args, **kwargs):
         super().move(*args, **kwargs)
         print(self)
         self.sprite.set_position(self.x*16, self.y*16)
+
+    @property
+    def map(self):
+        return self._map
+    @map.setter
+    def map(self, value):
+        self._map = value
 
 
 @engine.meta.register('engine.tile.Grass')
 class _:
     sprite = grounds_texgrid[49, 0]
 
+
 @engine.meta.register('engine.tile.HighGrass')
 class _:
     sprite = grounds_texgrid[22, 11]
+
 
 @engine.meta.register('engine.game.Game')
 class _:
@@ -57,10 +70,11 @@ class _:
                 self.player.walk(0, -1)
             engine.signals.handle_signals()
 
-        tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(self.maps[0].levels)]
-        event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.maps[0].levels)]
+        map = self.player.map
+        tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(map.levels)]
+        event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(map.levels)]
 
-        for level in self.maps[0].tiles:
+        for level in map.tiles:
             for line in level:
                 for tile in line:
                     if hasattr(tile, 'sprite'):
