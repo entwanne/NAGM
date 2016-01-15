@@ -1,3 +1,5 @@
+from enginemeta import GObjectMeta
+
 signals = [] # queue of signals to handle
 handlers = {}
 def reg_signal(sigtype, callback):
@@ -8,7 +10,10 @@ def handle_signals():
         for handler in handlers.get(sigtype, ()):
             handler(sigtype, *params)
 
-class Event:
+class GObject(metaclass=GObjectMeta):
+    pass
+
+class Event(GObject):
     "All objects that can interact with player (on the map)"
     def __init__(self):
         self.x, self.y, self.z = 0, 0, 0
@@ -38,7 +43,7 @@ class Player(Trainer):
 class Object(Event):
     "All objects (can be found on the map, put in the bag)"
 
-class BeastFamily:
+class BeastFamily(GObject):
     "Family of a beast: name, type, attacks, etc."
 
 class Beast(Character, BeastFamily):
@@ -50,7 +55,7 @@ class Beastiary(Object):
         self.families = [] # found families
         self.beasts = [] # catched beasts
 
-class Tile:
+class Tile(GObject):
     """All tiles ("voxels") on a map
     have some properties: traversable, etc.
     """
@@ -58,7 +63,7 @@ class Tile:
 class EventTile(Event, Tile):
     "Tiles that interact with player (stairs)"
 
-class WildGroup:
+class WildGroup(GObject):
     """Group of wild beasts (beasts are not instanciated until battle)
     groups can reproduct, move to other zones, etc.
     """
@@ -66,13 +71,13 @@ class WildGroup:
         self.family = family # BeastFamily
         self.population = population # number of beasts in the group (can increase, decrease)
 
-class Zone:
+class Zone(GObject):
     "Beast zones (where battle can be thrown)"
     def __init__(self, type):
         self.type = type # grass, water, etc.
         self.groups = [] # wild groups
 
-class Map:
+class Map(GObject):
     def __init__(self, width, height):
         self.width, self.height = width, height
         self.tiles = [] # map tiles (grounds)
@@ -94,7 +99,7 @@ class Map:
     def moved(self, char, old_pos, new_pos):
         print(new_pos)
 
-class Game:
+class Game(GObject):
     def __init__(self):
         self.maps = []
         self.player = None

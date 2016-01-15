@@ -2,6 +2,23 @@
 
 import pyglet
 
+import enginemeta
+def my_new(cls, name, bases, dict, decorated=False):
+    c = type.__new__(cls, name, bases, dict)
+    if decorated:
+        return c
+    print(cls, c, '{}.{}'.format(c.__module__, c.__qualname__))
+    def getattribute(self, name):
+        return c.__getattribute__(self, name)
+    return enginemeta.GObjectMeta(name,
+                                  (c,),
+                                  {'__getattribute__': getattribute},
+                                  True)
+def my_init(cls, name, bases, dict, decorated=False):
+    type.__init__(cls, name, bases, dict)
+enginemeta.GObjectMeta.__new__ = my_new
+enginemeta.GObjectMeta.__init__ = my_init
+
 import engine
 game = engine.game
 
