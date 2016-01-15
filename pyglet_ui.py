@@ -2,7 +2,7 @@
 
 import pyglet
 
-import enginemeta
+import engine.meta
 def my_new(cls, name, bases, dict, decorated=False):
     c = type.__new__(cls, name, bases, dict)
     if decorated:
@@ -10,17 +10,17 @@ def my_new(cls, name, bases, dict, decorated=False):
     print(cls, c, '{}.{}'.format(c.__module__, c.__qualname__))
     def getattribute(self, name):
         return c.__getattribute__(self, name)
-    return enginemeta.GObjectMeta(name,
+    return engine.meta.GObjectMeta(name,
                                   (c,),
                                   {'__getattribute__': getattribute},
                                   True)
 def my_init(cls, name, bases, dict, decorated=False):
     type.__init__(cls, name, bases, dict)
-enginemeta.GObjectMeta.__new__ = my_new
-enginemeta.GObjectMeta.__init__ = my_init
+engine.meta.GObjectMeta.__new__ = my_new
+engine.meta.GObjectMeta.__init__ = my_init
 
 import engine
-game = engine.game
+from init_game import game
 
 window = pyglet.window.Window(width=800, height=600)
 
@@ -33,8 +33,8 @@ grounds_imggrid = pyglet.image.ImageGrid(grounds_img, 50, 12)
 grounds_texgrid = pyglet.image.TextureGrid(grounds_imggrid)
 
 tiles_img = {
-    engine.Grass: grounds_texgrid[49, 0],
-    engine.HighGrass: grounds_texgrid[22, 11],
+    engine.tile.Grass: grounds_texgrid[49, 0],
+    engine.tile.HighGrass: grounds_texgrid[22, 11],
 }
 sprites = []
 for z, level in enumerate(game.maps[0].tiles):
@@ -58,7 +58,7 @@ def player_move(_, p, _1, _2, pos):
         return
     x, y, _ = pos
     player_sprite.set_position(x*16, y*16)
-engine.reg_signal('moved', player_move)
+engine.signals.reg_signal('moved', player_move)
 
 @window.event
 def on_draw():
@@ -87,6 +87,6 @@ def on_key_press(key, modifiers):
     elif key == pyglet.window.key.DOWN:
         #player.y -= 16
         game.player.walk(0, -1)
-    engine.handle_signals()
+    engine.signals.handle_signals()
 
 pyglet.app.run()
