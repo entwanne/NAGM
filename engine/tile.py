@@ -19,3 +19,6 @@ class HighGrass(EventTile):
     traversable = True
     def __init__(self, zone):
         self.zone = zone
+
+    def cross(self, player):
+        print('BATTLE')

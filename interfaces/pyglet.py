@@ -25,7 +25,6 @@ class _:
 
     def move(self, *args, **kwargs):
         super().move(*args, **kwargs)
-        print(self)
         self.sprite.set_position(self.x*16, self.y*16)
 
     @property
@@ -43,7 +42,7 @@ class _:
 
 @engine.meta.register('engine.tile.HighGrass')
 class _:
-    sprite = grounds_texgrid[22, 11]
+    sprite = grounds_texgrid[48, 3]
 
 
 @engine.meta.register('engine.game.Game')
