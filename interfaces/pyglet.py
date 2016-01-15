@@ -68,7 +68,7 @@ class _:
                 self.player.walk(0, 1)
             elif key == pyglet.window.key.DOWN:
                 self.player.walk(0, -1)
-            engine.signals.handle_signals()
+            self.handle_signals()
 
         map = self.player.map
         tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(map.levels)]

@@ -1,5 +1,4 @@
 from .event import Event
-from .signals import signals
 
 class Character(Event):
     "All characters (can move)"
@@ -11,7 +10,7 @@ class Character(Event):
         if self.map.can_move(x, y, z):
             old = self.x, self.y, self.z
             self.x, self.y, self.z = x, y, z
-            signals.append(('moved', self, self.map, old, (x, y, z)))
+            self.send('moved', self, self.map, old, (x, y, z))
 
     def walk(self, dx, dy):
         self.move(self.x + dx, self.y + dy)

@@ -1,4 +1,5 @@
 from .gobject import GObject
+from . import signals
 
 class Game(GObject):
     def __init__(self):
@@ -7,3 +8,11 @@ class Game(GObject):
 
     def run(self):
         pass
+
+    @staticmethod
+    def handle_signals():
+        signals.handle_signals()
+
+    @staticmethod
+    def reg_signal(*args):
+        signals.reg_signal(*args)
