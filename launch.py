@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+import interfaces.pyglet
+
 from engine import *
 
 game = game.Game()
@@ -15,7 +19,7 @@ bourg = map.Map(5, 5)
 bourg.zones = [pikazone]
 bourg.tiles = (
     (
-        (tile.Grass(), tile.Grass(), tile.Grass(), tile.Grass(), tile.Grass()),
+        (tile.Grass(), tile.Grass(), tile.HighGrass(pikazone), tile.Grass(), tile.Grass()),
         (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
         (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
         (tile.Grass(), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.HighGrass(pikazone), tile.Grass()),
@@ -39,12 +43,4 @@ game.player = player
 signals.reg_signal('moved', lambda _, char, map, old, new: map.moved(char, old, new))
 
 if __name__ == '__main__':
-    #handlers['moved'] = [lambda _, char, map, old, new: map.moved(char, old, new)]
-    # game:
-    player.walk(1, 0) # go to right
-    signals.handle_signals()
-    player.walk(0, 1) # go up
-    signals.handle_signals()
-    player.walk(0, 1) # go up
-    signals.handle_signals()
-    # -> battle
+    game.run()
