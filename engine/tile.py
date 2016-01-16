@@ -35,3 +35,6 @@ class Teleport(EventTile):
         if player.walking:
             map = game.maps[self.map_name] if self.map_name else None
             player.move(*self.pos, map=map)
+
+class Tree(Tile):
+    "Tree"

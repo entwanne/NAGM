@@ -3,9 +3,9 @@ import pyglet
 grounds_img = pyglet.image.load('res/sols.png')
 grounds_imggrid = pyglet.image.ImageGrid(grounds_img, 50, 12)
 grounds_texgrid = pyglet.image.TextureGrid(grounds_imggrid)
-#trees_img = pyglet.image.load('res/arbres.png')
-#trees_imggrid = pyglet.image.ImageGrid(trees_img, 50, 12)
-#trees_texgrid = pyglet.image.TextureGrid(trees_imggrid)
+trees_img = pyglet.image.load('res/arbres.png')
+trees_imggrid = pyglet.image.ImageGrid(trees_img, 50, 12)
+trees_texgrid = pyglet.image.TextureGrid(trees_imggrid)
 players_img = pyglet.image.load('res/persos.png')
 player_img = players_img.get_region(9 * 16, 0, 16, 32)
 
@@ -44,6 +44,7 @@ class _:
 @engine.meta.register('engine.tile.Tile')
 class _:
     img = grounds_texgrid[0, 0]
+    def refresh(self, map, pos): pass
 
 @engine.meta.register('engine.tile.Grass')
 class _:
@@ -58,6 +59,33 @@ class _:
     img = grounds_texgrid[48, 4]
 
 
+@engine.meta.register('engine.tile.Tree')
+class Tree:
+    Y, X = 47, 0
+    left = True
+    trunk = True
+    def refresh(self, map, pos):
+        x, y, z = pos
+        xtile = map.get_tile((x - 1, y, z))
+        if isinstance(xtile, Tree) and xtile.left:
+            self.left = False
+            self.X += 1
+        ytile = map.get_tile((x, y - 1, z))
+        if isinstance(ytile, Tree) and ytile.trunk:
+            self.trunk = False
+            self.Y += 1
+        ztile = map.get_tile((x, y, z - 1))
+        if isinstance(ztile, Tree):
+            if self.trunk:
+                self.X, self.Y = 0, 0
+            else:
+                self.Y += 1
+
+    @property
+    def img(self):
+        return trees_texgrid[self.Y, self.X]
+
+
 @engine.meta.register('engine.map.Map')
 class _:
     def __init__(self, *args, **kwargs):
@@ -69,6 +97,7 @@ class _:
         for z, level in enumerate(self.tiles):
             for y, line in enumerate(level):
                 for x, tile in enumerate(line):
+                    tile.refresh(self, (x, y, z))
                     tile.sprite = pyglet.sprite.Sprite(
                         tile.img,
                         x=x*16, y=(y+z)*16,

@@ -31,6 +31,8 @@ class Map(GObject):
         return (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles))
 
     def get_tile(self, pos):
+        if not self.has_tile(pos):
+            return
         x, y, z = pos
         return self.tiles[z][y][x]
 
