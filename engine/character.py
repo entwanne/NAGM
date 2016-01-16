@@ -10,7 +10,7 @@ class Character(Event):
             z = self.z
         if map is None:
             map = self.map
-        if map.can_move(x, y, z):
+        if map.can_move((x, y, z)):
             oldmap = self.map
             old = self.x, self.y, self.z
             self.map = map

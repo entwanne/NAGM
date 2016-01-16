@@ -17,18 +17,25 @@ class Map(GObject):
         width = len(tiles[0][0]) if height else 0
         return cls((width, height, levels), tiles, events, zones)
 
-    def can_move(self, x, y, z):
-        if not (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles)):
+    def can_move(self, pos):
+        if not self.has_tile(pos):
             return False
-        traversable = self.traversables.get((x, y, z))
+        traversable = self.traversables.get(pos)
         if traversable is None:
-            traversable = self.tiles[z][y][x].traversable
-            self.traversables[x, y, z] = traversable
+            traversable = self.get_tile(pos).traversable
+            self.traversables[pos] = traversable
         return traversable
 
-    def get_events(self, pos):
+    def has_tile(self, pos):
         x, y, z = pos
-        tile = self.tiles[z][y][x]
+        return (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles))
+
+    def get_tile(self, pos):
+        x, y, z = pos
+        return self.tiles[z][y][x]
+
+    def get_events(self, pos):
+        tile = self.get_tile(pos)
         if isinstance(tile, Event):
             yield tile
         for e in self.events:
