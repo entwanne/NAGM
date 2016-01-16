@@ -21,7 +21,7 @@ class HighGrass(EventTile):
         self.zone = zone
 
     def cross(self, game, player):
-        print('BATTLE')
+        print('BATTLE', self.zone.random_family().name)
         player.walk(1,0)
 
 class Teleport(EventTile):
