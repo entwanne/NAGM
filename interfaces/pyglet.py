@@ -7,9 +7,6 @@ window.push_handlers(keys)
 def on_expose():
     pass
 
-batch = pyglet.graphics.Batch()
-sprites = []
-
 grounds_img = pyglet.image.load('res/sols.png')
 grounds_imggrid = pyglet.image.ImageGrid(grounds_img, 50, 12)
 grounds_texgrid = pyglet.image.TextureGrid(grounds_imggrid)
@@ -23,28 +20,60 @@ import engine.meta
 class _:
     def __init__(self, *args, **kwargs):
         self._map = None
+        self.sprite = None
         super().__init__(*args, **kwargs)
 
     def move(self, *args, **kwargs):
         super().move(*args, **kwargs)
-        self.sprite.set_position(self.x*16, self.y*16)
+        if self.sprite is not None:
+            self.sprite.set_position(self.x*16, self.y*16)
 
     @property
     def map(self):
         return self._map
     @map.setter
-    def map(self, value):
-        self._map = value
+    def map(self, map):
+        if map is self._map:
+            return
+        self._map = map
+        if map is None:
+            self.sprite = None
+        else:
+            self.sprite = pyglet.sprite.Sprite(player_img, x=self.x*16, y=self.y*16, batch=map.batch, group=map.event_groups[self.z])
 
 
 @engine.meta.register('engine.tile.Grass')
 class _:
     sprite = grounds_texgrid[49, 0]
 
-
 @engine.meta.register('engine.tile.HighGrass')
 class _:
     sprite = grounds_texgrid[48, 3]
+
+@engine.meta.register('engine.tile.Teleport')
+class _:
+    sprite = grounds_texgrid[48, 4]
+
+
+@engine.meta.register('engine.map.Map')
+class _:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.batch = pyglet.graphics.Batch()
+        self.sprites = []
+        self.tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(self.levels)]
+        self.event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.levels)]
+
+        for z, level in enumerate(self.tiles):
+            for y, line in enumerate(level):
+                for x, tile in enumerate(line):
+                    if hasattr(tile, 'sprite'):
+                        self.sprites.append(
+                            pyglet.sprite.Sprite(
+                                tile.sprite,
+                                x=x*16, y=(y+z)*16,
+                                batch=self.batch, group=self.tile_groups[z])
+                        )
 
 
 import time
@@ -62,11 +91,13 @@ class _:
     def run(self):
         @window.event
         def on_draw():
+            if self.player.map is None:
+                return
             dx = window.width // 2 - self.player.sprite.x
             dy = window.height // 2 - self.player.sprite.y
             window.clear()
             pyglet.gl.glTranslatef(dx, dy, 0)
-            batch.draw()
+            self.player.map.batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)
 
         TICK = 0.3
@@ -93,22 +124,5 @@ class _:
                     signals_clock.reset()
                     keyboard_clock.reset()
         pyglet.clock.schedule(update)
-
-        map = self.player.map
-        tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(map.levels)]
-        event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(map.levels)]
-
-        for z, level in enumerate(map.tiles):
-            for y, line in enumerate(level):
-                for x, tile in enumerate(line):
-                    if hasattr(tile, 'sprite'):
-                        sprites.append(
-                            pyglet.sprite.Sprite(
-                                tile.sprite,
-                                x=x*16, y=(y+z)*16,
-                                batch=batch, group=tile_groups[z])
-                        )
-
-        self.player.sprite = pyglet.sprite.Sprite(player_img, x=self.player.x*16, y=self.player.y*16, batch=batch, group=event_groups[0])
 
         pyglet.app.run()

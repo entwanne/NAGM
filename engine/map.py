@@ -2,7 +2,7 @@ from .gobject import GObject
 from .event import Event
 
 class Map(GObject):
-    def __init__(self, size, tiles=(), events=(), zones=()):
+    def __init__(self, size, tiles, events=(), zones=()):
         self.width, self.height, self.levels = size
         self.tiles = tiles # map tiles (grounds)
         self.events = events # map events (objects, characters, event tiles, etc.)
@@ -35,8 +35,8 @@ class Map(GObject):
             if (e.x, e.y, e.z) == pos:
                 yield e
 
-    def moved(self, player, old_pos, new_pos):
+    def moved(self, game, player, old_pos, new_pos):
         for event in self.get_events(new_pos):
             if hasattr(event, 'cross'):
-                event.cross(player)
+                event.cross(game, player)
         #print(new_pos, tile)
