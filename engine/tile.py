@@ -22,3 +22,4 @@ class HighGrass(EventTile):
 
     def cross(self, player):
         print('BATTLE')
+        player.walk(1,0)

@@ -16,3 +16,7 @@ class Game(GObject):
     @staticmethod
     def reg_signal(*args):
         signals.reg_signal(*args)
+
+    @staticmethod
+    def have_signals():
+        return signals.have_signals()

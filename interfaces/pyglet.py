@@ -1,6 +1,8 @@
 import pyglet
 
 window = pyglet.window.Window(width=800, height=600)
+keys = pyglet.window.key.KeyStateHandler()
+window.push_handlers(keys)
 @window.event
 def on_expose():
     pass
@@ -45,6 +47,16 @@ class _:
     sprite = grounds_texgrid[48, 3]
 
 
+import time
+class Clock:
+    def __init__(self):
+        self.reset()
+    def reset(self):
+        self.time = time.time()
+    @property
+    def elapsed(self):
+        return time.time() - self.time
+
 @engine.meta.register('engine.game.Game')
 class _:
     def run(self):
@@ -57,17 +69,30 @@ class _:
             batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)
 
-        @window.event
-        def on_key_press(key, modifiers):
-            if key == pyglet.window.key.LEFT:
-                self.player.walk(-1, 0)
-            elif key == pyglet.window.key.RIGHT:
-                self.player.walk(1, 0)
-            elif key == pyglet.window.key.UP:
-                self.player.walk(0, 1)
-            elif key == pyglet.window.key.DOWN:
-                self.player.walk(0, -1)
-            self.handle_signals()
+        TICK = 0.3
+        signals_clock = Clock()
+        keyboard_clock = Clock()
+        def update(dt):
+            if self.have_signals():
+                if signals_clock.elapsed >= TICK:
+                    self.handle_signals()
+                    signals_clock.reset()
+                return
+            if keyboard_clock.elapsed >= TICK:
+                dx, dy = 0, 0
+                if keys.get(pyglet.window.key.LEFT):
+                    dx = -1
+                if keys.get(pyglet.window.key.RIGHT):
+                    dx = 1
+                if keys.get(pyglet.window.key.UP):
+                    dy = 1
+                if keys.get(pyglet.window.key.DOWN):
+                    dy = -1
+                if dx or dy:
+                    self.player.walk(dx, dy)
+                    signals_clock.reset()
+                    keyboard_clock.reset()
+        pyglet.clock.schedule(update)
 
         map = self.player.map
         tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(map.levels)]
