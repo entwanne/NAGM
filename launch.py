@@ -93,7 +93,5 @@ player.position = (0, 0)
 player.beastiary = beast.Beastiary()
 game.player = player
 
-game.reg_signal('moved', lambda _, char, oldmap, newmap, old, new: newmap.moved(game, char, old, new) if char == player else None)
-
 if __name__ == '__main__':
     game.run()

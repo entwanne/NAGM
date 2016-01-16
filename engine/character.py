@@ -15,7 +15,7 @@ class Character(Event):
             old = self.x, self.y, self.z
             self.map = map
             self.x, self.y, self.z = x, y, z
-            self.send('moved', self, oldmap, map, old, (x, y, z))
+            self.send(self.map.moved, old, (x, y, z))
 
     def walk(self, dx, dy):
         self.move(self.x + dx, self.y + dy)

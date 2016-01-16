@@ -9,9 +9,8 @@ class Game(GObject):
     def run(self):
         pass
 
-    @staticmethod
-    def handle_signals():
-        signals.handle_signals()
+    def handle_signals(self):
+        signals.handle_signals(self)
 
     @staticmethod
     def reg_signal(*args):
