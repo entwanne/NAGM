@@ -25,9 +25,12 @@ class _:
         super().__init__(*args, **kwargs)
 
     def move(self, *args, **kwargs):
+        old_z = self.z
         super().move(*args, **kwargs)
         if self.sprites:
             for z, sprite in enumerate(self.sprites):
+                if self.z != old_z:
+                    sprite.group = self.map.event_groups[self.z+z]
                 sprite.set_position(self.x*16, (self.y+self.z+z)*16)
 
     def turn(self, dx, dy):
@@ -120,7 +123,8 @@ class _:
         super().__init__(*args, **kwargs)
         self.batch = pyglet.graphics.Batch()
         self.tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(self.levels)]
-        self.event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.levels)]
+        self.event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.levels + 1)] # + 1 for heads (superior level)
+        print(self.event_groups)
 
         for z, level in enumerate(self.tiles):
             for y, line in enumerate(level):

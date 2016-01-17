@@ -25,7 +25,7 @@ class Character(Event):
         self.direction = dx, dy
 
     def walk(self):
-        self.move(self.x + self.dx, self.y + self.dy)
+        self.move(*self.map.walk_position(self.position, self.direction))
 
     @property
     def direction(self):

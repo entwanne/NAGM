@@ -17,16 +17,6 @@ class Map(GObject):
         width = len(tiles[0][0]) if height else 0
         return cls((width, height, levels), tiles, zones)
 
-    def can_move(self, pos):
-        if not self.has_tile(pos):
-            return False
-        traversable = self.traversables.get(pos)
-        if traversable is None:
-            for obj in self.on_case(pos):
-                traversable = obj.traversable
-            self.traversables[pos] = traversable
-        return traversable
-
     def has_tile(self, pos):
         x, y, z = pos
         return (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles))
@@ -51,6 +41,21 @@ class Map(GObject):
         if tile:
             yield tile
         yield from self.get_events(pos)
+
+    def walk_position(self, pos, dir):
+        x, y, z = pos
+        dx, dy = dir
+        return (x + dx, y + dy, z)
+
+    def can_move(self, pos):
+        if not self.has_tile(pos):
+            return False
+        traversable = self.traversables.get(pos)
+        if traversable is None:
+            for obj in self.on_case(pos):
+                traversable = obj.traversable
+            self.traversables[pos] = traversable
+        return traversable
 
     def moved(self, game, player, old_map, old_pos, pos):
         for event in self.on_case(pos):
