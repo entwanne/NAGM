@@ -183,6 +183,7 @@ class _:
         tick = 0.
         self.signals_clock = Clock(tick)
         self.keyboard_clock = Clock(tick)
+        self.events_clock = Clock(tick)
         #pyglet.clock.schedule(self.update)
         pyglet.clock.schedule_interval(self.update, 0.1)
 
@@ -202,6 +203,11 @@ class _:
                 self.handle_signals()
                 self.signals_clock.reset()
             return
+        if self.events_clock.finished:
+            for event in self.events:
+                if event.map == self.player.map and hasattr(event, 'step'):
+                    event.step(self)
+            self.events_clock.reset()
         if self.keyboard_clock.finished:
             dx, dy = 0, 0
             if self.keys.get(pyglet.window.key.LEFT):

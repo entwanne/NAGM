@@ -75,15 +75,6 @@ bourg_tiles = [
 ]
 bourg_zones = [zone]
 bourg = map.Map.from_tiles(bourg_tiles, bourg_zones)
-bourg_char = character.Character((1,16,0))
-def bourg_char_actioned(game, player, map, pos):
-    print('Hello')
-    x, y, z = pos
-    dx, dy = player.x - x, player.y - y
-    bourg_char.turn(dx, dy)
-bourg_char.actioned = bourg_char_actioned
-bourg.add_event(bourg_char)
-#bourg.add_event(object.Object())
 game.maps['bourg'] = bourg
 
 road_tiles = []
@@ -142,10 +133,35 @@ road_zones = [zone]
 road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
+bourg_char = character.Character((1,16,0), bourg)
+def bourg_char_actioned(game, player, map, pos):
+    print('Hello')
+    x, y, z = pos
+    dx, dy = player.x - x, player.y - y
+    bourg_char.turn(dx, dy)
+bourg_char.actioned = bourg_char_actioned
+def bourg_char_step(game):
+    bourg_char.n = (bourg_char.n + 1) % 5
+    if bourg_char.n:
+        return
+    pos = bourg_char.position
+    bourg_char.walk()
+    if pos == bourg_char.position:
+        dx, dy = bourg_char.direction
+        dc = dx + dy * 1j
+        dc *= 1j
+        dx, dy = int(dc.real), int(dc.imag)
+        bourg_char.turn(dx, dy)
+bourg_char.n = 0
+bourg_char.step = bourg_char_step
+event.events.append(bourg_char)
+#event.events.append(object.Object())
+
 
 player = player.Player((0, 2, 0), bourg)
 player.beastiary = beast.Beastiary()
 game.player = player
+game.events = event.events
 
 if __name__ == '__main__':
     game.run()

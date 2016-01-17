@@ -18,3 +18,5 @@ class Event(GObject):
 
     def send(self, handler, *args, **kwargs):
         signals.send_signal(handler, self, *args, **kwargs)
+
+events = []

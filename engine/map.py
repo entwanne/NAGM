@@ -1,12 +1,11 @@
 from .gobject import GObject
-from .event import Event
+from . import event
 
 class Map(GObject):
     def __init__(self, size, tiles, zones=()):
         self.width, self.height, self.levels = size
         self.tiles = tiles # map tiles (grounds)
         self.zones = zones # map zones (battles are thrown by events)
-        self.events = [] # map events (objects, characters, event tiles, etc.)
         self.neighboars = {} # neighboar maps (for coalescing)
         self.traversables = {}
 
@@ -27,13 +26,9 @@ class Map(GObject):
         x, y, z = pos
         return self.tiles[z][y][x]
 
-    def add_event(self, event):
-        event.map = self
-        self.events.append(event)
-
     def get_events(self, pos):
-        for e in self.events:
-            if e.position == pos:
+        for e in event.events:
+            if e.map == self and e.position == pos:
                 yield e
 
     def on_case(self, pos):
