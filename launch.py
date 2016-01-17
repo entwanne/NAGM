@@ -162,6 +162,7 @@ player = player.Player((0, 2, 0), bourg)
 player.beastiary = beast.Beastiary()
 game.player = player
 game.events = event.events
+game.events.append(player)
 
 if __name__ == '__main__':
     game.run()

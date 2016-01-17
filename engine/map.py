@@ -1,5 +1,6 @@
 from .gobject import GObject
 from . import event
+from .player import Player
 
 class Map(GObject):
     def __init__(self, size, tiles, zones=()):
@@ -56,10 +57,13 @@ class Map(GObject):
             self.traversables[pos] = traversable
         return traversable
 
-    def moved(self, game, player, old_map, old_pos, pos):
-        for event in self.on_case(pos):
-            if hasattr(event, 'crossed'):
-                event.crossed(game, player, old_map, old_pos, self, pos)
+    def moved(self, game, char, old_map, old_pos, pos):
+        old_map.traversables[old_pos] = None
+        self.traversables[pos] = None
+        if isinstance(char, Player):
+            for event in self.on_case(pos):
+                if hasattr(event, 'crossed'):
+                    event.crossed(game, char, old_map, old_pos, self, pos)
 
     def action(self, game, player, pos):
         for event in self.on_case(pos):
