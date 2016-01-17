@@ -16,7 +16,7 @@ class HighGrass(Tile):
     def __init__(self, zone):
         self.zone = zone
 
-    def cross(self, game, player):
+    def crossed(self, game, player):
         print('BATTLE', self.zone.random_family().name)
         player.turn(1,0)
         player.walk()
@@ -28,7 +28,7 @@ class Teleport(Tile):
         self.pos = pos
         self.map_name = map_name
 
-    def cross(self, game, player):
+    def crossed(self, game, player):
         if player.walking:
             map = game.maps[self.map_name] if self.map_name else None
             player.move(*self.pos, map=map)

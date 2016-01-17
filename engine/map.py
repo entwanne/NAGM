@@ -43,7 +43,7 @@ class Map(GObject):
 
     def get_events(self, pos):
         for e in self.events:
-            if (e.x, e.y, e.z) == pos:
+            if e.position == pos:
                 yield e
 
     def on_case(self, pos):
@@ -54,6 +54,10 @@ class Map(GObject):
 
     def moved(self, game, player, old_pos, new_pos):
         for event in self.on_case(new_pos):
-            if hasattr(event, 'cross'):
-                event.cross(game, player)
-        #print(new_pos, tile)
+            if hasattr(event, 'crossed'):
+                event.crossed(game, player)
+
+    def action(self, game, player, pos):
+        for event in self.on_case(pos):
+            if hasattr(event, 'actioned'):
+                event.actioned(game, player)

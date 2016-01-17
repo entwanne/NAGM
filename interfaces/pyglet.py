@@ -159,7 +159,9 @@ class _:
         @self.window.event
         def on_draw():
             self.draw()
-
+        @self.window.event
+        def on_key_press(key, modifiers):
+            self.key_press(key)
         self.keys = pyglet.window.key.KeyStateHandler()
         self.window.push_handlers(self.keys)
 
@@ -202,6 +204,10 @@ class _:
                     self.player.turn(dx, dy)
                 self.signals_clock.reset()
                 self.keyboard_clock.reset()
+
+    def key_press(self, key):
+        if key == pyglet.window.key.SPACE:
+            self.player.action()
 
     def run(self):
         pyglet.app.run()
