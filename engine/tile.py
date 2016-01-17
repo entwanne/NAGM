@@ -45,3 +45,10 @@ class Stairs(Tile):
     traversable = True
     def __init__(self, directions):
         self.directions = directions
+
+class Hole(Tile):
+    "Hole"
+    traversable = True
+    def crossed(self, game, player, old_map, old_pos, map, pos):
+        x, y, z = pos
+        player.move(x, y, z - 1)

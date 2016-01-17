@@ -20,6 +20,7 @@ tile_chars = {
     'x': tile.Rock,
     '=': lambda: tile.Stairs({(0, 1): (0, 0, 1)}),
     '#': lambda: tile.Stairs({(0, -1): (0, 0, -1)}),
+    '-': tile.Hole,
     '>': lambda: tile.Teleport((4,0), 'road'),
     '<': lambda: tile.Teleport((3,17), 'bourg'),
 }
@@ -113,7 +114,7 @@ road_tiles.append("""
 ||||......||||
 ||||......||||
 ||||.#....||||
-||||      ||||
+||||- ----||||
 ||||      ||||
 ||||      ||||
 ||||      ||||
