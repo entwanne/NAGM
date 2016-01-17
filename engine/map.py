@@ -52,12 +52,12 @@ class Map(GObject):
             yield tile
         yield from self.get_events(pos)
 
-    def moved(self, game, player, old_pos, new_pos):
-        for event in self.on_case(new_pos):
+    def moved(self, game, player, old_map, old_pos, pos):
+        for event in self.on_case(pos):
             if hasattr(event, 'crossed'):
-                event.crossed(game, player)
+                event.crossed(game, player, old_map, old_pos, self, pos)
 
     def action(self, game, player, pos):
         for event in self.on_case(pos):
             if hasattr(event, 'actioned'):
-                event.actioned(game, player)
+                event.actioned(game, player, self, pos)

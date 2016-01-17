@@ -9,7 +9,6 @@ class Character(Event):
         self.direction = 0, -1
 
     def move(self, x, y, z=None, map=None):
-        self.walking = False
         if z is None:
             z = self.z
         if map is None:
@@ -20,14 +19,13 @@ class Character(Event):
             old = self.position
             self.map = map
             self.position = pos
-            self.send(self.map.moved, old, pos)
+            self.send(self.map.moved, oldmap, old, pos)
 
     def turn(self, dx, dy):
         self.direction = dx, dy
 
     def walk(self):
         self.move(self.x + self.dx, self.y + self.dy)
-        self.walking = True
 
     @property
     def direction(self):

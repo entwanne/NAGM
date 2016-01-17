@@ -16,7 +16,7 @@ class HighGrass(Tile):
     def __init__(self, zone):
         self.zone = zone
 
-    def crossed(self, game, player):
+    def crossed(self, game, player, old_map, old_pos, map, pos):
         print('BATTLE', self.zone.random_family().name)
         player.turn(1,0)
         player.walk()
@@ -28,10 +28,11 @@ class Teleport(Tile):
         self.pos = pos
         self.map_name = map_name
 
-    def crossed(self, game, player):
-        if player.walking:
-            map = game.maps[self.map_name] if self.map_name else None
-            player.move(*self.pos, map=map)
+    def crossed(self, game, player, old_map, old_pos, map, pos):
+        if old_map and isinstance(old_map.get_tile(old_pos), Teleport):
+            return
+        map = game.maps[self.map_name] if self.map_name else None
+        player.move(*self.pos, map=map)
 
 class Tree(Tile):
     "Tree"
