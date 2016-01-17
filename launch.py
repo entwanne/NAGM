@@ -69,9 +69,10 @@ bourg_tiles = [
     ]
     for level in bourg_tiles
 ]
-bourg_events = (character.Character(), character.Trainer(), object.Object())
 bourg_zones = [zone]
-bourg = map.Map.from_tiles(bourg_tiles, bourg_events, bourg_zones)
+bourg = map.Map.from_tiles(bourg_tiles, bourg_zones)
+bourg.add_event(character.Character((0,17,0)))
+#bourg.add_event(object.Object())
 game.maps['bourg'] = bourg
 
 road_tiles = []
@@ -126,9 +127,8 @@ road_tiles = [
     ]
     for level in road_tiles
 ]
-road_events = ()
 road_zones = [zone]
-road = map.Map.from_tiles(road_tiles, road_events, road_zones)
+road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
 

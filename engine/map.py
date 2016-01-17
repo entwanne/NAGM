@@ -2,27 +2,28 @@ from .gobject import GObject
 from .event import Event
 
 class Map(GObject):
-    def __init__(self, size, tiles, events=(), zones=()):
+    def __init__(self, size, tiles, zones=()):
         self.width, self.height, self.levels = size
         self.tiles = tiles # map tiles (grounds)
-        self.events = events # map events (objects, characters, event tiles, etc.)
         self.zones = zones # map zones (battles are thrown by events)
+        self.events = [] # map events (objects, characters, event tiles, etc.)
         self.neighboars = {} # neighboar maps (for coalescing)
         self.traversables = {}
 
     @classmethod
-    def from_tiles(cls, tiles, events=(), zones=()):
+    def from_tiles(cls, tiles, zones=()):
         levels = len(tiles)
         height = len(tiles[0]) if levels else 0
         width = len(tiles[0][0]) if height else 0
-        return cls((width, height, levels), tiles, events, zones)
+        return cls((width, height, levels), tiles, zones)
 
     def can_move(self, pos):
         if not self.has_tile(pos):
             return False
         traversable = self.traversables.get(pos)
         if traversable is None:
-            traversable = self.get_tile(pos).traversable
+            for obj in self.on_case(pos):
+                traversable = obj.traversable
             self.traversables[pos] = traversable
         return traversable
 
@@ -36,16 +37,23 @@ class Map(GObject):
         x, y, z = pos
         return self.tiles[z][y][x]
 
+    def add_event(self, event):
+        event.map = self
+        self.events.append(event)
+
     def get_events(self, pos):
-        tile = self.get_tile(pos)
-        if isinstance(tile, Event):
-            yield tile
         for e in self.events:
             if (e.x, e.y, e.z) == pos:
                 yield e
 
+    def on_case(self, pos):
+        tile = self.get_tile(pos)
+        if tile:
+            yield tile
+        yield from self.get_events(pos)
+
     def moved(self, game, player, old_pos, new_pos):
-        for event in self.get_events(new_pos):
-            if hasattr(event, 'cross'):
+        for event in self.on_case(new_pos):
+            if isinstance(event, Event) and hasattr(event, 'cross'):
                 event.cross(game, player)
         #print(new_pos, tile)

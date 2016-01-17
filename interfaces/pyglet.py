@@ -7,22 +7,27 @@ trees_img = pyglet.image.load('res/arbres.png')
 trees_imggrid = pyglet.image.ImageGrid(trees_img, 50, 12)
 trees_texgrid = pyglet.image.TextureGrid(trees_imggrid)
 players_img = pyglet.image.load('res/persos.png')
-player_img = players_img.get_region(9 * 16, 0, 16, 32)
+players_imggrid = pyglet.image.ImageGrid(players_img, 2, 12)
+players_texgrid = pyglet.image.TextureGrid(players_imggrid)
 
 
 import engine.meta
 
-@engine.meta.register('engine.player.Player')
+@engine.meta.register('engine.event.Event')
+class _:
+    sprites = ()
+
+@engine.meta.register('engine.character.Character')
 class _:
     def __init__(self, *args, **kwargs):
         self._map = None
-        self.sprite = None
         super().__init__(*args, **kwargs)
 
     def move(self, *args, **kwargs):
         super().move(*args, **kwargs)
-        if self.sprite is not None:
-            self.sprite.set_position(self.x*16, self.y*16)
+        if self.sprites:
+            for z, sprite in enumerate(self.sprites):
+                sprite.set_position(self.x*16, (self.y+self.z+z)*16)
 
     @property
     def map(self):
@@ -33,12 +38,18 @@ class _:
             return
         self._map = map
         if map is None:
-            self.sprite = None
+            self.sprites = ()
         else:
-            self.sprite = pyglet.sprite.Sprite(
-                player_img,
-                x=self.x*16, y=(self.y+self.z)*16,
-                batch=map.batch, group=map.event_groups[self.z])
+            self.sprites = (
+                pyglet.sprite.Sprite(
+                    players_texgrid[0, 9],
+                    x=self.x*16, y=(self.y+self.z)*16,
+                    batch=map.batch, group=map.event_groups[self.z]),
+                pyglet.sprite.Sprite(
+                    players_texgrid[1, 9],
+                    x=self.x*16, y=(self.y+self.z+1)*16,
+                    batch=map.batch, group=map.event_groups[self.z+1]),
+            )
 
 
 @engine.meta.register('engine.tile.Tile')
@@ -144,8 +155,8 @@ class _:
     def draw(self):
         if self.player.map is None:
             return
-        dx = self.window.width // 2 - self.player.sprite.x
-        dy = self.window.height // 2 - self.player.sprite.y
+        dx = self.window.width // 2 - self.player.sprites[0].x
+        dy = self.window.height // 2 - self.player.sprites[0].y
         self.window.clear()
         pyglet.gl.glTranslatef(dx, dy, 0)
         self.player.map.batch.draw()
