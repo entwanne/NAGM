@@ -89,7 +89,6 @@ class _:
 class _:
     img = grounds_texgrid[48, 4]
 
-
 @engine.meta.register('engine.tile.Tree')
 class Tree:
     Y, X = 47, 0
@@ -116,6 +115,18 @@ class Tree:
     def img(self):
         return trees_texgrid[self.Y, self.X]
 
+@engine.meta.register('engine.tile.Rock')
+class _:
+    img = grounds_texgrid[32, 1]
+
+@engine.meta.register('engine.tile.Stairs')
+class Stairs:
+    img = grounds_texgrid[49, 0]
+    def refresh(self, map, pos):
+        x, y, z = pos
+        if (0, 1) in self.directions:
+            self.img = grounds_texgrid[49, 7]
+
 
 @engine.meta.register('engine.map.Map')
 class _:
@@ -124,7 +135,6 @@ class _:
         self.batch = pyglet.graphics.Batch()
         self.tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(self.levels)]
         self.event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.levels + 1)] # + 1 for heads (superior level)
-        print(self.event_groups)
 
         for z, level in enumerate(self.tiles):
             for y, line in enumerate(level):

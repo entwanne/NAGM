@@ -44,6 +44,10 @@ class Map(GObject):
 
     def walk_position(self, pos, dir):
         x, y, z = pos
+        tile = self.get_tile(pos)
+        if hasattr(tile, 'directions') and dir in tile.directions:
+            dx, dy, dz = tile.directions[dir]
+            return (x + dx, y + dy, z + dz)
         dx, dy = dir
         return (x + dx, y + dy, z)
 

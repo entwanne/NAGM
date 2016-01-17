@@ -36,3 +36,12 @@ class Teleport(Tile):
 
 class Tree(Tile):
     "Tree"
+
+class Rock(Tile):
+    "Rock"
+
+class Stairs(Tile):
+    "Stairs"
+    traversable = True
+    def __init__(self, directions):
+        self.directions = directions
