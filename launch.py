@@ -75,8 +75,13 @@ bourg_tiles = [
 ]
 bourg_zones = [zone]
 bourg = map.Map.from_tiles(bourg_tiles, bourg_zones)
-bourg_char = character.Character((0,17,0))
-bourg_char.actioned = lambda game, player, map, pos: print('Hello')
+bourg_char = character.Character((1,16,0))
+def bourg_char_actioned(game, player, map, pos):
+    print('Hello')
+    x, y, z = pos
+    dx, dy = player.x - x, player.y - y
+    bourg_char.turn(dx, dy)
+bourg_char.actioned = bourg_char_actioned
 bourg.add_event(bourg_char)
 #bourg.add_event(object.Object())
 game.maps['bourg'] = bourg
