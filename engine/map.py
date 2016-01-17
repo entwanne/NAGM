@@ -54,6 +54,6 @@ class Map(GObject):
 
     def moved(self, game, player, old_pos, new_pos):
         for event in self.on_case(new_pos):
-            if isinstance(event, Event) and hasattr(event, 'cross'):
+            if hasattr(event, 'cross'):
                 event.cross(game, player)
         #print(new_pos, tile)

@@ -4,6 +4,10 @@ class Character(Event):
     "All characters (can move)"
     traversable = False
 
+    def __init__(self, *args, **kwargs):
+        super(Event, self).__init__(*args, **kwargs)
+        self.direction = 0, -1
+
     def move(self, x, y, z=None, map=None):
         self.walking = False
         if z is None:
@@ -17,7 +21,11 @@ class Character(Event):
             self.x, self.y, self.z = x, y, z
             self.send(self.map.moved, old, (x, y, z))
 
-    def walk(self, dx, dy):
+    def turn(self, dx, dy):
+        self.direction = dx, dy
+
+    def walk(self):
+        dx, dy = self.direction
         self.move(self.x + dx, self.y + dy)
         self.walking = True
 

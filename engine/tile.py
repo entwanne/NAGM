@@ -1,5 +1,4 @@
 from .gobject import GObject
-from .event import Event
 
 class Tile(GObject):
     """All tiles ("voxels") on a map
@@ -7,14 +6,11 @@ class Tile(GObject):
     """
     traversable = False
 
-class EventTile(Event, Tile):
-    "Tiles that interact with player (stairs)"
-
 class Grass(Tile):
     "Normal grass"
     traversable = True
 
-class HighGrass(EventTile):
+class HighGrass(Tile):
     "High grass (battles)"
     traversable = True
     def __init__(self, zone):
@@ -22,9 +18,10 @@ class HighGrass(EventTile):
 
     def cross(self, game, player):
         print('BATTLE', self.zone.random_family().name)
-        player.walk(1,0)
+        player.turn(1,0)
+        player.walk()
 
-class Teleport(EventTile):
+class Teleport(Tile):
     "Teleport player"
     traversable = True
     def __init__(self, pos, map_name=None):

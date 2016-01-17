@@ -21,6 +21,7 @@ class _:
 class _:
     def __init__(self, *args, **kwargs):
         self._map = None
+        self.sprite_offset = 9
         super().__init__(*args, **kwargs)
 
     def move(self, *args, **kwargs):
@@ -28,6 +29,22 @@ class _:
         if self.sprites:
             for z, sprite in enumerate(self.sprites):
                 sprite.set_position(self.x*16, (self.y+self.z+z)*16)
+
+    def turn(self, dx, dy):
+        olddir = self.direction
+        super().turn(dx, dy)
+        if self.direction != olddir:
+            if dx > 0:
+                off = 0
+            elif dx < 0:
+                off = 6
+            elif dy > 0:
+                off = 3
+            else:
+                off = 9
+            self.sprite_offset = off
+            for z, sprite in enumerate(self.sprites):
+                sprite.image = players_texgrid[z, off]
 
     @property
     def map(self):
@@ -42,11 +59,11 @@ class _:
         else:
             self.sprites = (
                 pyglet.sprite.Sprite(
-                    players_texgrid[0, 9],
+                    players_texgrid[0, self.sprite_offset],
                     x=self.x*16, y=(self.y+self.z)*16,
                     batch=map.batch, group=map.event_groups[self.z]),
                 pyglet.sprite.Sprite(
-                    players_texgrid[1, 9],
+                    players_texgrid[1, self.sprite_offset],
                     x=self.x*16, y=(self.y+self.z+1)*16,
                     batch=map.batch, group=map.event_groups[self.z+1]),
             )
@@ -179,7 +196,10 @@ class _:
             elif self.keys.get(pyglet.window.key.DOWN):
                 dy = -1
             if dx or dy:
-                self.player.walk(dx, dy)
+                if self.player.direction == (dx, dy):
+                    self.player.walk()
+                else:
+                    self.player.turn(dx, dy)
                 self.signals_clock.reset()
                 self.keyboard_clock.reset()
 
