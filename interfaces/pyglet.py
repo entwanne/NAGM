@@ -183,7 +183,8 @@ class _:
         tick = 0.
         self.signals_clock = Clock(tick)
         self.keyboard_clock = Clock(tick)
-        pyglet.clock.schedule(self.update)
+        #pyglet.clock.schedule(self.update)
+        pyglet.clock.schedule_interval(self.update, 0.1)
 
     def draw(self):
         if self.player.map is None:
