@@ -5,7 +5,7 @@ class Character(Event):
     traversable = False
 
     def __init__(self, *args, **kwargs):
-        super(Event, self).__init__(*args, **kwargs)
+        Event.__init__(self, *args, **kwargs)
         self.direction = 0, -1
 
     def move(self, x, y, z=None, map=None):

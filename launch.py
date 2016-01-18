@@ -6,12 +6,14 @@ from engine import *
 
 game = game.Game()
 
+
 pikachu = beast.BeastFamily('Pikachu', 'Electrik')
 carapuce = beast.BeastFamily('Carapuce', 'Eau')
 
 pikagroup = zone.WildGroup(pikachu, 10) # group of 10 pikachus
 caragroup = zone.WildGroup(carapuce, 4) # group of 4 carapuces
 zone = zone.Zone('grass', [pikagroup, caragroup])
+
 
 tile_chars = {
     '.': tile.Grass,
@@ -133,6 +135,7 @@ road_zones = [zone]
 road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
+
 bourg_char = character.Character((1,16,0), bourg)
 def bourg_char_actioned(game, player, map, pos):
     print('Hello')
@@ -163,6 +166,7 @@ player.beastiary = beast.Beastiary()
 game.player = player
 game.events = event.events
 game.events.append(player)
+
 
 if __name__ == '__main__':
     game.run()
