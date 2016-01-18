@@ -1,4 +1,5 @@
 from .gobject import GObject
+from .beast import Beast
 
 class WildGroup(GObject):
     """Group of wild beasts (beasts are not instanciated until battle)
@@ -16,7 +17,8 @@ class Zone(GObject):
         self.type = type # grass, water, etc.
         self.groups = groups # wild groups
 
-    def random_family(self):
+    def random_beast(self):
         weights_acc = list(itertools.accumulate(group.population for group in self.groups))
         x = random.random() * weights_acc[-1]
-        return self.groups[bisect.bisect(weights_acc, x)].family
+        family = self.groups[bisect.bisect(weights_acc, x)].family
+        return Beast(family)

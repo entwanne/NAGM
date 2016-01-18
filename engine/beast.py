@@ -8,8 +8,14 @@ class BeastFamily(GObject):
         self.name = name
         self.type = type
 
-class Beast(Character, BeastFamily):
+class Beast(Character):
     "All beasts (can be moving on the map, in their balls, etc.)"
+    def __init__(self, family, name=None):
+        self.family = family
+        if name is None:
+            self.name = self.family.name
+        else:
+            self.name = name
 
 class Beastiary(Object):
     "All catched beasts for a player"
