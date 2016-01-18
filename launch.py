@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+DEBUG = True
+
 import interfaces.pyglet
 
 from engine import *
@@ -169,4 +171,16 @@ game.events.append(player)
 
 
 if __name__ == '__main__':
-    game.run()
+    if DEBUG:
+        import code, threading, signal
+        class MainThread(threading.Thread):
+            def run(self):
+                game.run()
+                signal.alarm(1)
+        def handler(*_):
+            raise EOFError
+        signal.signal(signal.SIGALRM, handler)
+        MainThread(daemon=True).start()
+        code.interact(local={'game': game})
+    else:
+        game.run()

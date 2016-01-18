@@ -26,12 +26,13 @@ class _:
 
     def move(self, *args, **kwargs):
         old_z = self.z
-        super().move(*args, **kwargs)
-        if self.sprites:
+        ret = super().move(*args, **kwargs)
+        if ret and self.sprites:
             for z, sprite in enumerate(self.sprites):
                 if self.z != old_z:
                     sprite.group = self.map.event_groups[self.z+z]
                 sprite.set_position(self.x*16, (self.y+self.z+z)*16)
+        return ret
 
     def turn(self, dx, dy):
         olddir = self.direction
@@ -161,6 +162,7 @@ class Clock:
         if self.max is None:
             return False
         return self.elapsed > self.max
+
 
 @engine.meta.register('engine.game.Game')
 class _:
