@@ -140,18 +140,16 @@ game.maps['road'] = road
 
 bourg_char = character.Character((1,16,0), bourg)
 def bourg_char_actioned(game, player, map, pos):
-    print('Hello')
     x, y, z = pos
     dx, dy = player.x - x, player.y - y
     bourg_char.turn(dx, dy)
+    dialog.Dialog('Hello', player, bourg_char)
 bourg_char.actioned = bourg_char_actioned
 def bourg_char_step(game):
     bourg_char.n = (bourg_char.n + 1) % 5
     if bourg_char.n:
         return
-    pos = bourg_char.position
-    bourg_char.walk()
-    if pos == bourg_char.position:
+    if not bourg_char.walk():
         dx, dy = bourg_char.direction
         dc = dx + dy * 1j
         dc *= 1j

@@ -1,5 +1,6 @@
 from .gobject import GObject
-from .battle import Battle
+#from .battle import Battle
+from .dialog import Dialog
 
 class Tile(GObject):
     """All tiles ("voxels") on a map
@@ -19,8 +20,9 @@ class HighGrass(Tile):
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
         beast = self.zone.random_beast()
-        player.battle = Battle(player, beast)
-        print('A wild', beast.name, 'appears')
+        #Battle(player, beast)
+        #print('A wild', beast.name, 'appears')
+        Dialog('A wild {} appears'.format(beast.name), player)
 
 class Teleport(Tile):
     "Teleport player"

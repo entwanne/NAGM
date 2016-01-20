@@ -1,1 +1,1 @@
-__all__ = ['game', 'event', 'beast', 'character', 'object', 'zone', 'map', 'tile', 'player', 'signals']
+__all__ = ['game', 'event', 'beast', 'character', 'object', 'zone', 'map', 'tile', 'player', 'battle', 'dialog', 'signals']

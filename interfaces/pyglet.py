@@ -148,6 +148,13 @@ class _:
                         batch=self.batch, group=self.tile_groups[z])
 
 
+@engine.meta.register('engine.dialog.Dialog')
+class _:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label = pyglet.text.Label(self.msg)
+
+
 import time
 class Clock:
     def __init__(self, max=None):
@@ -199,6 +206,8 @@ class _:
         pyglet.gl.glTranslatef(dx, dy, 0)
         self.player.map.batch.draw()
         pyglet.gl.glTranslatef(-dx, -dy, 0)
+        if self.player.dialog:
+            self.player.dialog.label.draw()
 
     def update(self, _dt):
         if self.have_signals():

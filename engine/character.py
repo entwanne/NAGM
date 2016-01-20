@@ -7,8 +7,11 @@ class Character(Event):
     def __init__(self, *args, **kwargs):
         Event.__init__(self, *args, **kwargs)
         self.direction = 0, -1
+        self.dialog = None
 
     def move(self, x, y, z=None, map=None):
+        if not self.moveable:
+            return False
         if z is None:
             z = self.z
         if map is None:
@@ -24,6 +27,8 @@ class Character(Event):
         return True
 
     def turn(self, dx, dy):
+        if not self.moveable:
+            return False
         self.direction = dx, dy
         return True
 
@@ -38,5 +43,16 @@ class Character(Event):
     def direction(self, dir):
         self.dx, self.dy = dir
 
+    @property
+    def moveable(self):
+        return self.dialog is None
+
 class Trainer(Character):
     "All trainers (playable or not)"
+    def __init__(self, *args, **kwargs):
+        Character.__init__(self, *args, **kwargs)
+        self.battle = None
+
+    @property
+    def moveable(self):
+        return self.battle is None and self.dialog is None

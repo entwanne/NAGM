@@ -1,5 +1,4 @@
 from .gobject import GObject
-from . import signals
 
 class Event(GObject):
     "All objects that can interact with player (on the map)"
@@ -15,8 +14,5 @@ class Event(GObject):
     @position.setter
     def position(self, pos):
         self.x, self.y, self.z = pos
-
-    def send(self, handler, *args, **kwargs):
-        signals.send_signal(handler, self, *args, **kwargs)
 
 events = []
