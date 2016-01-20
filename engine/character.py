@@ -25,6 +25,7 @@ class Character(Event):
 
     def turn(self, dx, dy):
         self.direction = dx, dy
+        return True
 
     def walk(self):
         return self.move(*self.map.walk_position(self.position, self.direction))

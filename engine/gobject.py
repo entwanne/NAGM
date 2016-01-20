@@ -1,4 +1,5 @@
 from .meta import GObjectMeta
 
 class GObject(metaclass=GObjectMeta):
-    pass
+    def __init__(self):
+        pass

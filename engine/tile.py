@@ -19,7 +19,8 @@ class HighGrass(Tile):
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
         beast = self.zone.random_beast()
-        print(Battle(player, beast), beast.name)
+        player.battle = Battle(player, beast)
+        print('A wild', beast.name, 'appears')
 
 class Teleport(Tile):
     "Teleport player"

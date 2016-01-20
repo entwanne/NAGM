@@ -36,8 +36,8 @@ class _:
 
     def turn(self, dx, dy):
         olddir = self.direction
-        super().turn(dx, dy)
-        if self.direction != olddir:
+        ret = super().turn(dx, dy)
+        if ret and self.direction != olddir:
             if dx > 0:
                 off = 0
             elif dx < 0:
@@ -49,6 +49,7 @@ class _:
             self.sprite_offset = off
             for z, sprite in enumerate(self.sprites):
                 sprite.image = players_texgrid[z, off]
+        return ret
 
     @property
     def map(self):
