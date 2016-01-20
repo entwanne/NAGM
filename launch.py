@@ -173,14 +173,13 @@ game.events.append(player)
 if __name__ == '__main__':
     if DEBUG:
         import code, threading, signal
-        class MainThread(threading.Thread):
+        main_thread_id = threading.get_ident()
+        class GameThread(threading.Thread):
             def run(self):
                 game.run()
-                signal.alarm(1)
-        def handler(*_):
-            raise EOFError
-        signal.signal(signal.SIGALRM, handler)
-        MainThread(daemon=True).start()
-        code.interact(local={'game': game})
+                signal.pthread_kill(main_thread_id, signal.SIGQUIT)
+        GameThread(daemon=True).start()
+        import engine
+        code.interact(local={'game': game, 'engine': engine})
     else:
         game.run()
