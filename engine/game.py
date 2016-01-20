@@ -1,5 +1,6 @@
 from .gobject import GObject
 from . import signals
+import time
 
 class Game(GObject):
     def __init__(self):
@@ -7,7 +8,9 @@ class Game(GObject):
         self.player = None
 
     def run(self):
-        pass
+        while True:
+            self.handle_signals()
+            time.sleep(0.3)
 
     def handle_signals(self):
         signals.handle_signals(self)
