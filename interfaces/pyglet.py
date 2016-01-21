@@ -10,6 +10,11 @@ players_img = pyglet.image.load('res/persos.png')
 players_imggrid = pyglet.image.ImageGrid(players_img, 2, 12)
 players_texgrid = pyglet.image.TextureGrid(players_imggrid)
 
+beasts_imgs = {
+    'Pikachu': grounds_texgrid[45, 4],
+    'Carapuce': grounds_texgrid[45, 7],
+}
+
 
 import engine.meta
 
@@ -155,6 +160,18 @@ class _:
         self.label = pyglet.text.Label(self.msg)
 
 
+@engine.meta.register('engine.battle.Battle')
+class _:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.batch = pyglet.graphics.Batch()
+        if self.beast2 and self.beast2.family.name in beasts_imgs:
+            self.sprite = pyglet.sprite.Sprite(
+                beasts_imgs[self.beast2.family.name],
+                x=100, y=100,
+                batch=self.batch)
+
+
 import time
 class Clock:
     def __init__(self, max=None):
@@ -176,7 +193,7 @@ class Clock:
 class _:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.window = pyglet.window.Window(width=800, height=600)
+        self.window = pyglet.window.Window(width=21*16, height=21*16)
         @self.window.event
         def on_expose():
             pass
@@ -198,14 +215,16 @@ class _:
         pyglet.clock.schedule_interval(self.update, 0.1)
 
     def draw(self):
-        if self.player.map is None:
-            return
-        dx = self.window.width // 2 - self.player.sprites[0].x
-        dy = self.window.height // 2 - self.player.sprites[0].y
         self.window.clear()
-        pyglet.gl.glTranslatef(dx, dy, 0)
-        self.player.map.batch.draw()
-        pyglet.gl.glTranslatef(-dx, -dy, 0)
+        if self.player.battle:
+            self.player.battle.batch.draw()
+        elif self.player.map:
+            sprite = self.player.sprites[0]
+            dx = (self.window.width - sprite.width) // 2 - sprite.x
+            dy = (self.window.height - sprite.height) // 2 - sprite.y
+            pyglet.gl.glTranslatef(dx, dy, 0)
+            self.player.map.batch.draw()
+            pyglet.gl.glTranslatef(-dx, -dy, 0)
         if self.player.dialog:
             self.player.dialog.label.draw()
 

@@ -12,8 +12,8 @@ game = game.Game()
 pikachu = beast.BeastFamily('Pikachu', 'Electrik')
 carapuce = beast.BeastFamily('Carapuce', 'Eau')
 
-pikagroup = zone.WildGroup(pikachu, 10) # group of 10 pikachus
-caragroup = zone.WildGroup(carapuce, 4) # group of 4 carapuces
+pikagroup = zone.WildGroup(pikachu, 5) # group of 10 pikachus
+caragroup = zone.WildGroup(carapuce, 2) # group of 4 carapuces
 zone = zone.Zone('grass', [pikagroup, caragroup])
 
 

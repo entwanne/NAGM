@@ -1,5 +1,5 @@
 from .gobject import GObject
-#from .battle import Battle
+from .battle import Battle
 from .dialog import Dialog
 
 class Tile(GObject):
@@ -17,12 +17,13 @@ class HighGrass(Tile):
     traversable = True
     def __init__(self, zone):
         self.zone = zone
+        zone.area += 1
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
-        beast = self.zone.random_beast()
-        #Battle(player, beast)
-        #print('A wild', beast.name, 'appears')
-        Dialog('A wild {} appears'.format(beast.name), player)
+        beast = self.zone.maybe_beast()
+        if beast is not None:
+            Battle(player, beast)
+            Dialog('A wild {} appears'.format(beast.name), player)
 
 class Teleport(Tile):
     "Teleport player"

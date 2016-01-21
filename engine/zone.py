@@ -16,9 +16,16 @@ class Zone(GObject):
     def __init__(self, type, groups):
         self.type = type # grass, water, etc.
         self.groups = groups # wild groups
+        self.area = 0
 
     def random_beast(self):
         weights_acc = list(itertools.accumulate(group.population for group in self.groups))
         x = random.random() * weights_acc[-1]
         family = self.groups[bisect.bisect(weights_acc, x)].family
         return Beast(family)
+
+    def maybe_beast(self):
+        density = sum(group.population for group in self.groups) / self.area
+        if random.random() > density:
+            return
+        return self.random_beast()
