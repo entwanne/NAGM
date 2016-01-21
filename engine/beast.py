@@ -16,6 +16,15 @@ class Beast(Character):
             self.name = self.family.name
         else:
             self.name = name
+        self.hp = 50
+        self.attack_coef = 10
+
+    @property
+    def ko(self):
+        return self.hp == 0
+
+    def attack(self, beast):
+        beast.hp = max(beast.hp - self.attack_coef, 0)
 
 class Beastiary(Object):
     "All catched beasts for a player"

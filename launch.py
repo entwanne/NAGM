@@ -146,6 +146,20 @@ def bourg_char_actioned(game, player, map, pos):
     dialog.Dialog('Hello', player, bourg_char)
 bourg_char.actioned = bourg_char_actioned
 def bourg_char_step(game):
+    """
+    if not hasattr(bourg_char, 'last_pos'):
+        bourg_char.last_pos = game.player.position
+        return
+    if game.player.position != bourg_char.last_pos:
+        bourg_char.last_pos = game.player.position
+        if not bourg_char.walk():
+            dx, dy = bourg_char.direction
+            dc = dx + dy * 1j
+            dc *= 1j
+            dx, dy = int(dc.real), int(dc.imag)
+            bourg_char.turn(dx, dy)
+    return
+    """
     bourg_char.n = (bourg_char.n + 1) % 5
     if bourg_char.n:
         return
@@ -163,6 +177,7 @@ event.events.append(bourg_char)
 
 player = player.Player((0, 2, 0), bourg)
 player.beastiary = beast.Beastiary()
+player.beast = beast.Beast(carapuce)
 game.player = player
 game.events = event.events
 game.events.append(player)
