@@ -165,9 +165,9 @@ class _:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.batch = pyglet.graphics.Batch()
-        if self.beast2 and self.beast2.family.name in beasts_imgs:
+        if self.beasts[1] and self.beasts[1].family.name in beasts_imgs:
             self.sprite = pyglet.sprite.Sprite(
-                beasts_imgs[self.beast2.family.name],
+                beasts_imgs[self.beasts[1].family.name],
                 x=100, y=100,
                 batch=self.batch)
 
