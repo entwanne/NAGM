@@ -25,7 +25,8 @@ class _:
 @engine.meta.register('engine.character.Character')
 class _:
     def __init__(self, *args, **kwargs):
-        self._map = None
+        self._sprites = ()
+        self.sprites_map = None
         self.sprite_offset = 9
         super().__init__(*args, **kwargs)
 
@@ -57,17 +58,14 @@ class _:
         return ret
 
     @property
-    def map(self):
-        return self._map
-    @map.setter
-    def map(self, map):
-        if map is self._map:
-            return
-        self._map = map
+    def sprites(self):
+        if self.map is self.sprites_map:
+            return self._sprites
+        map = self.map
         if map is None:
-            self.sprites = ()
+            self._sprites = ()
         else:
-            self.sprites = (
+            self._sprites = (
                 pyglet.sprite.Sprite(
                     players_texgrid[0, self.sprite_offset],
                     x=self.x*16, y=(self.y+self.z)*16,
@@ -77,6 +75,8 @@ class _:
                     x=self.x*16, y=(self.y+self.z+1)*16,
                     batch=map.batch, group=map.event_groups[self.z+1]),
             )
+        self.sprites_map = map
+        return self._sprites
 
 
 @engine.meta.register('engine.tile.Tile')
