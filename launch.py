@@ -6,6 +6,29 @@ import interfaces.pyglet
 
 from engine import *
 
+class BourgChar(character.Character):
+    def __init__(self, *args, **kwargs):
+        character.Character.__init__(self, *args, **kwargs)
+        self.n = 0
+
+    def actioned(self, game, player, map, pos):
+        x, y, z = pos
+        dx, dy = player.x - x, player.y - y
+        self.turn(dx, dy)
+        dialog.Dialog('Hello', player, self)
+
+    def step(self, game):
+        self.n = (self.n + 1) % 5
+        if self.n:
+            return
+        if not self.walk():
+            dx, dy = self.direction
+            dc = dx + dy * 1j
+            dc *= 1j
+            dx, dy = int(dc.real), int(dc.imag)
+            self.turn(dx, dy)
+
+
 game = game.Game()
 
 
@@ -138,40 +161,7 @@ road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
 
-bourg_char = character.Character((1,16,0), bourg)
-def bourg_char_actioned(game, player, map, pos):
-    x, y, z = pos
-    dx, dy = player.x - x, player.y - y
-    bourg_char.turn(dx, dy)
-    dialog.Dialog('Hello', player, bourg_char)
-bourg_char.actioned = bourg_char_actioned
-def bourg_char_step(game):
-    """
-    if not hasattr(bourg_char, 'last_pos'):
-        bourg_char.last_pos = game.player.position
-        return
-    if game.player.position != bourg_char.last_pos:
-        bourg_char.last_pos = game.player.position
-        if not bourg_char.walk():
-            dx, dy = bourg_char.direction
-            dc = dx + dy * 1j
-            dc *= 1j
-            dx, dy = int(dc.real), int(dc.imag)
-            bourg_char.turn(dx, dy)
-    return
-    """
-    bourg_char.n = (bourg_char.n + 1) % 5
-    if bourg_char.n:
-        return
-    if not bourg_char.walk():
-        dx, dy = bourg_char.direction
-        dc = dx + dy * 1j
-        dc *= 1j
-        dx, dy = int(dc.real), int(dc.imag)
-        bourg_char.turn(dx, dy)
-bourg_char.n = 0
-bourg_char.step = bourg_char_step
-event.events.append(bourg_char)
+event.events.append(BourgChar((1,16,0), bourg))
 #event.events.append(object.Object())
 
 
