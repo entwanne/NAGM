@@ -3,6 +3,9 @@ from .beast import Beast
 
 class Battle(GObject):
     "Battle between two trainers (or beasts)"
+
+    __attributes__ = GObject.__attributes__ + ('trainers', 'beasts')
+
     def __init__(self, *trainers):
         self.trainers, self.beasts = [], []
         for trainer in trainers:

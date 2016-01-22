@@ -138,8 +138,7 @@ road_zones = [zone]
 road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
-
-event.events.append(BourgChar((1,16,0), bourg))
+game.events.append(BourgChar((1,16,0), bourg))
 #event.events.append(object.Object())
 
 
@@ -147,7 +146,6 @@ player = player.Player((0, 2, 0), bourg)
 player.beastiary = beast.Beastiary()
 player.beast = beast.Beast(carapuce)
 game.player = player
-game.events = event.events
 game.events.append(player)
 
 

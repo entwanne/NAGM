@@ -1,8 +1,10 @@
 from .gobject import GObject
-from . import signals
+from . import signals, event
 import time
 
 class Game(GObject):
+    __attributes__ = GObject.__attributes__ + ('maps', 'player', 'events')
+
     def __init__(self):
         self.maps = {}
         self.player = None
@@ -22,3 +24,7 @@ class Game(GObject):
     @staticmethod
     def have_signals():
         return signals.have_signals()
+
+    @property
+    def events(self):
+        return event.events

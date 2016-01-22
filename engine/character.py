@@ -2,6 +2,9 @@ from .event import Event
 
 class Character(Event):
     "All characters (can move)"
+
+    __attributes__ = Event.__attributes__ + ('dx', 'dy', 'dialog')
+
     traversable = False
 
     def __init__(self, *args, **kwargs):
@@ -49,6 +52,9 @@ class Character(Event):
 
 class Trainer(Character):
     "All trainers (playable or not)"
+
+    __attributes__ = Character.__attributes__ + ('battle',)
+
     def __init__(self, *args, **kwargs):
         Character.__init__(self, *args, **kwargs)
         self.battle = None

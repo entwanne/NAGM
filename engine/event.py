@@ -2,6 +2,9 @@ from .gobject import GObject
 
 class Event(GObject):
     "All objects that can interact with player (on the map)"
+
+    __attributes__ = GObject.__attributes__ + ('x', 'y', 'z', 'map')
+
     traversable = True
     def __init__(self, pos=(0, 0, 0), map=None):
         self.position = pos

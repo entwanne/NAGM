@@ -5,6 +5,9 @@ class WildGroup(GObject):
     """Group of wild beasts (beasts are not instanciated until battle)
     groups can reproduct, move to other zones, etc.
     """
+
+    __attributes__ = GObject.__attributes__ + ('family', 'population')
+
     def __init__(self, family, population=2):
         self.family = family # BeastFamily
         self.population = population # number of beasts in the group (can increase, decrease)
@@ -13,6 +16,9 @@ import random, itertools, bisect
 
 class Zone(GObject):
     "Beast zones (where battle can be thrown)"
+
+    __attributes__ = GObject.__attributes__ + ('type', 'groups', 'area')
+
     def __init__(self, type, groups):
         self.type = type # grass, water, etc.
         self.groups = groups # wild groups

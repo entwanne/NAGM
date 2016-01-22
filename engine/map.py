@@ -3,6 +3,9 @@ from . import event
 from .player import Player
 
 class Map(GObject):
+
+    __attributes__ = GObject.__attributes__ + ('width', 'height', 'levels', 'tiles', 'zones')
+
     def __init__(self, size, tiles, zones=()):
         self.width, self.height, self.levels = size
         self.tiles = tiles # map tiles (grounds)

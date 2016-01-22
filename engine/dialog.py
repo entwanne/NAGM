@@ -1,6 +1,8 @@
 from .gobject import GObject
 
 class Dialog(GObject):
+    __attributes__ = GObject.__attributes__ + ('msg', 'dest', 'src')
+
     def __init__(self, msg, dest, src=None):
         print(msg)
         self.msg, self.dest, self.src = msg, dest, src
