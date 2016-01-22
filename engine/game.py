@@ -29,3 +29,7 @@ class Game(GObject):
     @property
     def events(self):
         return event.events
+
+    @events.setter
+    def events(self, value):
+        event.events = value

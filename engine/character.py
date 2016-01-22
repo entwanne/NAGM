@@ -54,6 +54,7 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
+    __attributes__ = Character.__attributes__ + ('beast',) # to delete
     __dependencies__ = Character.__dependencies__ + ('battle',)
 
     def __init__(self, **kwargs):

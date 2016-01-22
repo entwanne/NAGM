@@ -4,149 +4,36 @@ DEBUG = True
 
 import interfaces.pyglet
 
-from engine import *
-from game_defs import BourgChar
+import game_defs
 
-game = game.Game()
+import os.path
 
-
-pikachu = beast.BeastFamily(name='Pikachu', type='Electrik')
-carapuce = beast.BeastFamily(name='Carapuce', type='Eau')
-
-pikagroup = zone.WildGroup(family=pikachu, population=5) # group of 10 pikachus
-caragroup = zone.WildGroup(family=carapuce, population=2) # group of 4 carapuces
-zone = zone.Zone(type='grass', groups=[pikagroup, caragroup])
-
-
-tile_chars = {
-    '.': tile.Grass,
-    '*': lambda: tile.HighGrass(zone=zone),
-    '|': tile.Tree,
-    'x': tile.Rock,
-    '=': lambda: tile.Stairs(directions={(0, 1): (0, 0, 1)}),
-    '#': lambda: tile.Stairs(directions={(0, -1): (0, 0, -1)}),
-    '-': tile.Hole,
-    '>': lambda: tile.Teleport(pos=(4,0), map_name='road'),
-    '<': lambda: tile.Teleport(pos=(3,17), map_name='bourg'),
-}
-
-bourg_tiles = []
-bourg_tiles.append("""
-...>......||||
-..........||||
-..........||||
-..........||||
-..........||||
-..........||||
-..........||||
-..........||||
-....***...||||
-....***>..||||
-....***...||||
-.....*....||||
-..........||||
-..........||||
-..........||||
-..........||||
-||||||||||||||
-||||||||||||||
-""")
-bourg_tiles.append("""
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-          ||||
-||||||||||||||
-||||||||||||||
-""")
-bourg_tiles = [
-    [
-        [tile_chars.get(t, tile.Tile)() for t in line]
-        for line in reversed(level.splitlines()) if line
-    ]
-    for level in bourg_tiles
-]
-bourg_zones = [zone]
-bourg = map.Map.from_tiles(bourg_tiles, bourg_zones)
-game.maps['bourg'] = bourg
-
-road_tiles = []
-road_tiles.append("""
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||x=xxxx||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||..**..||||
-||||<.....||||
-""")
-road_tiles.append("""
-||||......||||
-||||......||||
-||||......||||
-||||......||||
-||||......||||
-||||......||||
-||||......||||
-||||......||||
-||||.#....||||
-||||- ----||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-||||      ||||
-""")
-road_tiles = [
-    [
-        [tile_chars.get(t, tile.Tile)() for t in line]
-        for line in reversed(level.splitlines()) if line
-    ]
-    for level in road_tiles
-]
-road_zones = [zone]
-road = map.Map.from_tiles(road_tiles, road_zones)
-game.maps['road'] = road
-
-game.events.append(BourgChar(position=(1,16,0), map=bourg))
-#event.events.append(object.Object())
-
-
-player = player.Player(position=(0, 2, 0), map=bourg)
-player.beastiary = beast.Beastiary()
-player.beast = beast.Beast(family=carapuce)
-game.player = player
-game.events.append(player)
+if os.path.exists('game.save'):
+    game = None
+    import engine
+    import pickle
+    with open('game.save', 'rb') as f:
+        game_id, defs = pickle.load(f)
+    print(game_id)
+    objects = {}
+    def load(obj):
+        if isinstance(obj, tuple):
+            return tuple(load(v) for v in obj)
+        if isinstance(obj, list):
+            return [load(v) for v in obj]
+        if isinstance(obj, dict):
+            return {load(k): load(v) for (k, v) in obj.items()}
+        if obj in objects:
+            return objects[obj]
+        return obj
+    for objid, clsname, attrs in defs:
+        cls = engine.meta.created[clsname]
+        attrs = {k: load(v) for (k, v) in attrs.items()}
+        objects[objid] = cls(**attrs)
+    game = objects[game_id]
+    objects = []
+else:
+    game = game_defs.init_game()
 
 
 if __name__ == '__main__':

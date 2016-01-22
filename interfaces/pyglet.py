@@ -25,10 +25,10 @@ class _:
 @engine.meta.register('engine.character.Character')
 class _:
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._sprites = ()
         self.sprites_map = None
-        self.sprite_offset = 9
-        super().__init__(**kwargs)
+        self.calc_sprite_offset(self.dx, self.dy)
 
     def move(self, *args, **kwargs):
         old_z = self.z
@@ -44,17 +44,9 @@ class _:
         olddir = self.direction
         ret = super().turn(dx, dy)
         if ret and self.direction != olddir:
-            if dx > 0:
-                off = 0
-            elif dx < 0:
-                off = 6
-            elif dy > 0:
-                off = 3
-            else:
-                off = 9
-            self.sprite_offset = off
+            self.calc_sprite_offset(dx, dy)
             for z, sprite in enumerate(self.sprites):
-                sprite.image = players_texgrid[z, off]
+                sprite.image = players_texgrid[z, self.sprite_offset]
         return ret
 
     @property
@@ -77,6 +69,17 @@ class _:
             )
         self.sprites_map = map
         return self._sprites
+
+    def calc_sprite_offset(self, dx, dy):
+        if dx > 0:
+            off = 0
+        elif dx < 0:
+            off = 6
+        elif dy > 0:
+            off = 3
+        else:
+            off = 9
+        self.sprite_offset = off
 
 
 @engine.meta.register('engine.tile.Tile')
@@ -260,6 +263,11 @@ class _:
     def key_press(self, key):
         if key == pyglet.window.key.SPACE:
             self.player.action()
+        elif key == pyglet.window.key.S:
+            import pickle
+            with open('game.save', 'wb') as f:
+                pickle.dump([self.id, self.dump()], f)
+
 
     def run(self):
         pyglet.app.run()
