@@ -3,13 +3,14 @@ from .event import Event
 class Character(Event):
     "All characters (can move)"
 
-    __attributes__ = Event.__attributes__ + ('dx', 'dy', 'dialog')
+    __attributes__ = Event.__attributes__ + ('direction',)
+    __dependencies__ = Event.__dependencies__ + ('dialog',)
 
     traversable = False
 
-    def __init__(self, *args, **kwargs):
-        Event.__init__(self, *args, **kwargs)
-        self.direction = 0, -1
+    def __init__(self, **kwargs):
+        kwargs.setdefault('direction', (0, -1))
+        Event.__init__(self, **kwargs)
         self.dialog = None
 
     def move(self, x, y, z=None, map=None):
@@ -53,10 +54,10 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
-    __attributes__ = Character.__attributes__ + ('battle',)
+    __dependencies__ = Character.__dependencies__ + ('battle',)
 
-    def __init__(self, *args, **kwargs):
-        Character.__init__(self, *args, **kwargs)
+    def __init__(self, **kwargs):
+        Character.__init__(self, **kwargs)
         self.battle = None
 
     @property

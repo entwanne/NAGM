@@ -10,24 +10,24 @@ from game_defs import BourgChar
 game = game.Game()
 
 
-pikachu = beast.BeastFamily('Pikachu', 'Electrik')
-carapuce = beast.BeastFamily('Carapuce', 'Eau')
+pikachu = beast.BeastFamily(name='Pikachu', type='Electrik')
+carapuce = beast.BeastFamily(name='Carapuce', type='Eau')
 
-pikagroup = zone.WildGroup(pikachu, 5) # group of 10 pikachus
-caragroup = zone.WildGroup(carapuce, 2) # group of 4 carapuces
-zone = zone.Zone('grass', [pikagroup, caragroup])
+pikagroup = zone.WildGroup(family=pikachu, population=5) # group of 10 pikachus
+caragroup = zone.WildGroup(family=carapuce, population=2) # group of 4 carapuces
+zone = zone.Zone(type='grass', groups=[pikagroup, caragroup])
 
 
 tile_chars = {
     '.': tile.Grass,
-    '*': lambda: tile.HighGrass(zone),
+    '*': lambda: tile.HighGrass(zone=zone),
     '|': tile.Tree,
     'x': tile.Rock,
-    '=': lambda: tile.Stairs({(0, 1): (0, 0, 1)}),
-    '#': lambda: tile.Stairs({(0, -1): (0, 0, -1)}),
+    '=': lambda: tile.Stairs(directions={(0, 1): (0, 0, 1)}),
+    '#': lambda: tile.Stairs(directions={(0, -1): (0, 0, -1)}),
     '-': tile.Hole,
-    '>': lambda: tile.Teleport((4,0), 'road'),
-    '<': lambda: tile.Teleport((3,17), 'bourg'),
+    '>': lambda: tile.Teleport(pos=(4,0), map_name='road'),
+    '<': lambda: tile.Teleport(pos=(3,17), map_name='bourg'),
 }
 
 bourg_tiles = []
@@ -138,13 +138,13 @@ road_zones = [zone]
 road = map.Map.from_tiles(road_tiles, road_zones)
 game.maps['road'] = road
 
-game.events.append(BourgChar((1,16,0), bourg))
+game.events.append(BourgChar(position=(1,16,0), map=bourg))
 #event.events.append(object.Object())
 
 
-player = player.Player((0, 2, 0), bourg)
+player = player.Player(position=(0, 2, 0), map=bourg)
 player.beastiary = beast.Beastiary()
-player.beast = beast.Beast(carapuce)
+player.beast = beast.Beast(family=carapuce)
 game.player = player
 game.events.append(player)
 

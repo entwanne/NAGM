@@ -6,16 +6,23 @@ class Battle(GObject):
 
     __attributes__ = GObject.__attributes__ + ('trainers', 'beasts')
 
-    def __init__(self, *trainers):
-        self.trainers, self.beasts = [], []
-        for trainer in trainers:
-            if isinstance(trainer, Beast):
-                self.trainers.append(None)
-                self.beasts.append(trainer)
-            else:
-                self.trainers.append(trainer)
-                self.beasts.append(getattr(trainer, 'beast', None))
+    def __init__(self, **kwargs):
+        kwargs['trainers']
+        kwargs['beasts']
+        GObject.__init__(self, **kwargs)
+        for trainer in self.trainers:
+            if trainer:
                 trainer.battle = self
+
+    @classmethod
+    def from_args(cls, *args):
+        args = (
+            (None, obj) if isinstance(obj, Beast)
+            else (obj, getattr(obj, 'beast', None))
+            for obj in args
+        )
+        trainers, beasts = zip(*args)
+        return cls(trainers=trainers, beasts=beasts)
 
     def action(self, game, player):
         if any(beast.ko for beast in self.beasts if beast):

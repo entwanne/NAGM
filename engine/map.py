@@ -6,10 +6,16 @@ class Map(GObject):
 
     __attributes__ = GObject.__attributes__ + ('width', 'height', 'levels', 'tiles', 'zones')
 
-    def __init__(self, size, tiles, zones=()):
-        self.width, self.height, self.levels = size
-        self.tiles = tiles # map tiles (grounds)
-        self.zones = zones # map zones (battles are thrown by events)
+    def __init__(self, **kwargs):
+        kwargs['width']
+        kwargs['height']
+        kwargs['levels']
+        kwargs['tiles']
+        kwargs.setdefault('zones', ())
+        #self.width, self.height, self.levels = size
+        #self.tiles = tiles # map tiles (grounds)
+        #self.zones = zones # map zones (battles are thrown by events)
+        GObject.__init__(self, **kwargs)
         self.neighboars = {} # neighboar maps (for coalescing)
         self.traversables = {}
 
@@ -18,7 +24,7 @@ class Map(GObject):
         levels = len(tiles)
         height = len(tiles[0]) if levels else 0
         width = len(tiles[0][0]) if height else 0
-        return cls((width, height, levels), tiles, zones)
+        return cls(width=width, height=height, levels=levels, tiles=tiles, zones=zones)
 
     def has_tile(self, pos):
         x, y, z = pos

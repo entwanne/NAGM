@@ -1,15 +1,15 @@
 from engine import *
 
 class BourgChar(character.Character):
-    def __init__(self, *args, **kwargs):
-        character.Character.__init__(self, *args, **kwargs)
+    def __init__(self, **kwargs):
+        character.Character.__init__(self, **kwargs)
         self.n = 0
 
     def actioned(self, game, player, map, pos):
         x, y, z = pos
         dx, dy = player.x - x, player.y - y
         self.turn(dx, dy)
-        dialog.Dialog('Hello', player, self)
+        dialog.Dialog(msg='Hello', dest=player, src=self)
 
     def step(self, game):
         self.n = (self.n + 1) % 5

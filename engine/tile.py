@@ -18,15 +18,16 @@ class HighGrass(Tile):
     __attributes__ = Tile.__attributes__ + ('zone',)
 
     traversable = True
-    def __init__(self, zone):
-        self.zone = zone
-        zone.area += 1
+    def __init__(self, **kwargs):
+        kwargs['zone']
+        Tile.__init__(self, **kwargs)
+        self.zone.area += 1
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
         beast = self.zone.maybe_beast()
         if beast is not None:
-            Battle(player, beast)
-            Dialog('A wild {} appears'.format(beast.name), player)
+            Battle.from_args(player, beast)
+            Dialog(msg='A wild {} appears'.format(beast.name), dest=player)
 
 class Teleport(Tile):
     "Teleport player"
@@ -34,9 +35,10 @@ class Teleport(Tile):
     __attributes__ = Tile.__attributes__ + ('pos', 'map_name')
 
     traversable = True
-    def __init__(self, pos, map_name=None):
-        self.pos = pos
-        self.map_name = map_name
+    def __init__(self, **kwargs):
+        kwargs['pos']
+        kwargs.setdefault('map_name', None)
+        Tile.__init__(self, **kwargs)
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
         if old_map and isinstance(old_map.get_tile(old_pos), Teleport):
@@ -56,8 +58,9 @@ class Stairs(Tile):
     __attributes__ = Tile.__attributes__ + ('directions',)
 
     traversable = True
-    def __init__(self, directions):
-        self.directions = directions
+    def __init__(self, **kwargs):
+        kwargs['directions']
+        Tile.__init__(self, **kwargs)
 
 class Hole(Tile):
     "Hole"

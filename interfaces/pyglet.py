@@ -24,11 +24,11 @@ class _:
 
 @engine.meta.register('engine.character.Character')
 class _:
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         self._sprites = ()
         self.sprites_map = None
         self.sprite_offset = 9
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def move(self, *args, **kwargs):
         old_z = self.z
@@ -137,8 +137,8 @@ class Stairs:
 
 @engine.meta.register('engine.map.Map')
 class _:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.batch = pyglet.graphics.Batch()
         self.tile_groups = [pyglet.graphics.OrderedGroup(2 * i) for i in range(self.levels)]
         self.event_groups = [pyglet.graphics.OrderedGroup(2 * i + 1) for i in range(self.levels + 1)] # + 1 for heads (superior level)
@@ -155,15 +155,15 @@ class _:
 
 @engine.meta.register('engine.dialog.Dialog')
 class _:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.label = pyglet.text.Label(self.msg)
 
 
 @engine.meta.register('engine.battle.Battle')
 class _:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.batch = pyglet.graphics.Batch()
         if self.beasts[1] and self.beasts[1].family.name in beasts_imgs:
             self.sprite = pyglet.sprite.Sprite(
@@ -191,8 +191,8 @@ class Clock:
 
 @engine.meta.register('engine.game.Game')
 class _:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.window = pyglet.window.Window(width=21*16, height=21*16)
         @self.window.event
         def on_expose():

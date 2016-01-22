@@ -5,9 +5,10 @@ import time
 class Game(GObject):
     __attributes__ = GObject.__attributes__ + ('maps', 'player', 'events')
 
-    def __init__(self):
-        self.maps = {}
-        self.player = None
+    def __init__(self, **kwargs):
+        kwargs.setdefault('maps', {})
+        kwargs.setdefault('player', None)
+        GObject.__init__(self, **kwargs)
 
     def run(self):
         while True:
