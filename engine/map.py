@@ -8,10 +8,6 @@ class Map(GObject):
     __attributes__ = GObject.__attributes__ + ('width', 'height', 'levels', 'tiles', 'zones')
 
     def __init__(self, **kwargs):
-        #kwargs['width']
-        #kwargs['height']
-        #kwargs['levels']
-        #kwargs['tiles']
         kwargs.setdefault('zones', ())
         #self.width, self.height, self.levels = size
         #self.tiles = tiles # map tiles (grounds)

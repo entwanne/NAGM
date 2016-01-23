@@ -23,7 +23,6 @@ class HighGrass(Tile):
 
     traversable = True
     def __init__(self, **kwargs):
-        #kwargs['zone']
         super().__init__(**kwargs)
         self.zone.area += 1
 
@@ -41,7 +40,6 @@ class Teleport(Tile):
 
     traversable = True
     def __init__(self, **kwargs):
-        #kwargs['pos']
         kwargs.setdefault('map_name', None)
         super().__init__(**kwargs)
 
@@ -64,11 +62,7 @@ class Stairs(Tile):
     "Stairs"
 
     __attributes__ = Tile.__attributes__ + ('directions',)
-
     traversable = True
-    def __init__(self, **kwargs):
-        #kwargs['directions']
-        super().__init__(**kwargs)
 
 @meta.apply
 class Hole(Tile):

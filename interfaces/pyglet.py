@@ -29,6 +29,7 @@ class _:
         self._sprites = ()
         self.sprites_map = None
         self.calc_sprite_offset(self.dx, self.dy)
+        self.sprites # compute sprites
 
     def move(self, *args, **kwargs):
         old_z = self.z
@@ -266,7 +267,7 @@ class _:
         elif key == pyglet.window.key.S:
             import pickle
             with open('game.save', 'wb') as f:
-                pickle.dump([self.id, self.dump()], f)
+                pickle.dump(self, f)
 
 
     def run(self):

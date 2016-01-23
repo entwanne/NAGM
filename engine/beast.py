@@ -10,8 +10,6 @@ class BeastFamily(GObject):
     __attributes__ = GObject.__attributes__ + ('name', 'type')
 
     def __init__(self, **kwargs):
-        #kwargs['name']
-        #kwargs['type']
         super().__init__(**kwargs)
 
 @meta.apply
@@ -21,7 +19,6 @@ class Beast(Character):
     __attributes__ = Character.__attributes__ + ('family', 'name', 'hp', 'attack_coef')
 
     def __init__(self, **kwargs):
-        #kwargs['family']
         kwargs.setdefault('name', kwargs['family'].name)
         kwargs.setdefault('hp', 50)
         kwargs.setdefault('attack_coef', 10)

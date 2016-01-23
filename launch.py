@@ -9,29 +9,10 @@ import game_defs
 import os.path
 
 if os.path.exists('game.save'):
-    game = None
-    import engine
     import pickle
     with open('game.save', 'rb') as f:
-        game_id, defs = pickle.load(f)
-    print(game_id)
-    objects = {}
-    def load(obj):
-        if isinstance(obj, tuple):
-            return tuple(load(v) for v in obj)
-        if isinstance(obj, list):
-            return [load(v) for v in obj]
-        if isinstance(obj, dict):
-            return {load(k): load(v) for (k, v) in obj.items()}
-        if obj in objects:
-            return objects[obj]
-        return obj
-    for objid, clsname, attrs in defs:
-        cls = engine.meta.created[clsname]
-        attrs = {k: load(v) for (k, v) in attrs.items()}
-        objects[objid] = cls(**attrs)
-    game = objects[game_id]
-    objects = []
+        game = pickle.load(f)
+    print(game.events)
 else:
     game = game_defs.init_game()
 

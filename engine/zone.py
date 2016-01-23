@@ -11,7 +11,6 @@ class WildGroup(GObject):
     __attributes__ = GObject.__attributes__ + ('family', 'population')
 
     def __init__(self, **kwargs):
-        #kwargs['family']
         kwargs.setdefault('population', 2)
         #self.family = family # BeastFamily
         #self.population = population # number of beasts in the group (can increase, decrease)
@@ -26,8 +25,6 @@ class Zone(GObject):
     __attributes__ = GObject.__attributes__ + ('type', 'groups')
 
     def __init__(self, **kwargs):
-        #kwargs['type']
-        #kwargs['groups']
         #self.type = type # grass, water, etc.
         #self.groups = groups # wild groups
         super().__init__(**kwargs)

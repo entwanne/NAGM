@@ -5,16 +5,14 @@ from . import meta
 class Character(Event):
     "All characters (can move)"
 
-    __attributes__ = Event.__attributes__ + ('direction',)
-    __dependencies__ = Event.__dependencies__ + ('dialog',)
+    __attributes__ = Event.__attributes__ + ('direction', 'dialog')
 
     traversable = False
 
     def __init__(self, **kwargs):
-        print(__class__)
         kwargs.setdefault('direction', (0, -1))
+        kwargs.setdefault('dialog', None)
         super().__init__(**kwargs)
-        self.dialog = None
 
     def move(self, x, y, z=None, map=None):
         if not self.moveable:
@@ -58,13 +56,13 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
-    __attributes__ = Character.__attributes__ + ('beast',) # to delete
-    __dependencies__ = Character.__dependencies__ + ('battle',)
+    __attributes__ = Character.__attributes__ + ('battle',)
+    __attributes__ += ('beast',) # to delete
 
     def __init__(self, **kwargs):
+        kwargs.setdefault('battle', None)
         kwargs.setdefault('beast', None) # to delete
         super().__init__(**kwargs)
-        self.battle = None
 
     @property
     def moveable(self):

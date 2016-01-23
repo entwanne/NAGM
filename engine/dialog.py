@@ -6,8 +6,6 @@ class Dialog(GObject):
     __attributes__ = GObject.__attributes__ + ('msg', 'dest', 'src')
 
     def __init__(self, **kwargs):
-        #kwargs['msg']
-        #kwargs['dest']
         kwargs.setdefault('src', None)
         super().__init__(**kwargs)
         print(self.msg)

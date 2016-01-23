@@ -9,8 +9,6 @@ class Battle(GObject):
     __attributes__ = GObject.__attributes__ + ('trainers', 'beasts')
 
     def __init__(self, **kwargs):
-        #kwargs['trainers']
-        #kwargs['beasts']
         super().__init__(**kwargs)
         for trainer in self.trainers:
             if trainer:
