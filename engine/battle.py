@@ -1,15 +1,17 @@
 from .gobject import GObject
 from .beast import Beast
+from . import meta
 
+@meta.apply
 class Battle(GObject):
     "Battle between two trainers (or beasts)"
 
     __attributes__ = GObject.__attributes__ + ('trainers', 'beasts')
 
     def __init__(self, **kwargs):
-        kwargs['trainers']
-        kwargs['beasts']
-        GObject.__init__(self, **kwargs)
+        #kwargs['trainers']
+        #kwargs['beasts']
+        super().__init__(**kwargs)
         for trainer in self.trainers:
             if trainer:
                 trainer.battle = self

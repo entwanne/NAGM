@@ -1,4 +1,5 @@
 import engine
+import engine.meta
 import engine.game
 import engine.character
 import engine.map
@@ -7,9 +8,10 @@ import engine.zone
 import engine.beast
 import engine.dialog
 
+@engine.meta.apply
 class BourgChar(engine.character.Character):
     def __init__(self, **kwargs):
-        engine.character.Character.__init__(self, **kwargs)
+        super().__init__(**kwargs)
         self.n = 0
 
     def actioned(self, game, player, map, pos):

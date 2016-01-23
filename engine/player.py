@@ -1,5 +1,7 @@
 from .character import Trainer
+from . import meta
 
+@meta.apply
 class Player(Trainer):
     "Playable trainer(s)"
     def action(self):

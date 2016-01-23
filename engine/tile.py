@@ -1,17 +1,21 @@
 from .gobject import GObject
 from .battle import Battle
 from .dialog import Dialog
+from . import meta
 
+@meta.apply
 class Tile(GObject):
     """All tiles ("voxels") on a map
     have some properties: traversable, etc.
     """
     traversable = False
 
+@meta.apply
 class Grass(Tile):
     "Normal grass"
     traversable = True
 
+@meta.apply
 class HighGrass(Tile):
     "High grass (battles)"
 
@@ -19,8 +23,8 @@ class HighGrass(Tile):
 
     traversable = True
     def __init__(self, **kwargs):
-        kwargs['zone']
-        Tile.__init__(self, **kwargs)
+        #kwargs['zone']
+        super().__init__(**kwargs)
         self.zone.area += 1
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
@@ -29,6 +33,7 @@ class HighGrass(Tile):
             Battle.from_args(player, beast)
             Dialog(msg='A wild {} appears'.format(beast.name), dest=player)
 
+@meta.apply
 class Teleport(Tile):
     "Teleport player"
 
@@ -36,9 +41,9 @@ class Teleport(Tile):
 
     traversable = True
     def __init__(self, **kwargs):
-        kwargs['pos']
+        #kwargs['pos']
         kwargs.setdefault('map_name', None)
-        Tile.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     def crossed(self, game, player, old_map, old_pos, map, pos):
         if old_map and isinstance(old_map.get_tile(old_pos), Teleport):
@@ -46,12 +51,15 @@ class Teleport(Tile):
         map = game.maps[self.map_name] if self.map_name else None
         player.move(*self.pos, map=map)
 
+@meta.apply
 class Tree(Tile):
     "Tree"
 
+@meta.apply
 class Rock(Tile):
     "Rock"
 
+@meta.apply
 class Stairs(Tile):
     "Stairs"
 
@@ -59,9 +67,10 @@ class Stairs(Tile):
 
     traversable = True
     def __init__(self, **kwargs):
-        kwargs['directions']
-        Tile.__init__(self, **kwargs)
+        #kwargs['directions']
+        super().__init__(**kwargs)
 
+@meta.apply
 class Hole(Tile):
     "Hole"
     traversable = True

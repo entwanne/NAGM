@@ -1,13 +1,15 @@
 from .gobject import GObject
+from . import meta
 
+@meta.apply
 class Dialog(GObject):
     __attributes__ = GObject.__attributes__ + ('msg', 'dest', 'src')
 
     def __init__(self, **kwargs):
-        kwargs['msg']
-        kwargs['dest']
+        #kwargs['msg']
+        #kwargs['dest']
         kwargs.setdefault('src', None)
-        GObject.__init__(self, **kwargs)
+        super().__init__(**kwargs)
         print(self.msg)
         self.dest.dialog = self
         if self.src is not None:

@@ -1,5 +1,7 @@
 from .gobject import GObject
+from . import meta
 
+@meta.apply
 class Event(GObject):
     "All objects that can interact with player (on the map)"
 
@@ -9,7 +11,7 @@ class Event(GObject):
     def __init__(self, **kwargs):
         kwargs.setdefault('position', (0, 0, 0))
         kwargs.setdefault('map', None)
-        GObject.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     @property
     def position(self):

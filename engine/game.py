@@ -1,14 +1,17 @@
 from .gobject import GObject
 from . import signals, event
+from . import meta
 import time
 
+@meta.apply
 class Game(GObject):
     __attributes__ = GObject.__attributes__ + ('maps', 'player', 'events')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('maps', {})
         kwargs.setdefault('player', None)
-        GObject.__init__(self, **kwargs)
+        kwargs.setdefault('events', [])
+        super().__init__(**kwargs)
 
     def run(self):
         while True:
