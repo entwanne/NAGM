@@ -264,9 +264,7 @@ class _:
         if key == pyglet.window.key.SPACE:
             self.player.action()
         elif key == pyglet.window.key.S:
-            import pickle
-            with open('game.save', 'wb') as f:
-                pickle.dump(self, f)
+            self.save('game.save')
 
 
     def run(self):

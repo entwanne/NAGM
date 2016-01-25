@@ -11,10 +11,7 @@ import test_game
 import os.path
 
 if os.path.exists('game.save'):
-    import pickle
-    with open('game.save', 'rb') as f:
-        game = pickle.load(f)
-    print(game.events)
+    game = engine.game.Game.load('game.save')
 else:
     game = test_game.init_game()
 

@@ -36,3 +36,17 @@ class Game(GObject):
     @events.setter
     def events(self, value):
         event.events = value
+
+    def save(self, filename):
+        import pickle
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+
+    @classmethod
+    def load(cls, filename):
+        import pickle
+        with open(filename, 'rb') as f:
+            game = pickle.load(f)
+        if not isinstance(game, cls):
+            raise TypeError('Wrong game type')
+        return game
