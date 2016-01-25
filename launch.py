@@ -3,8 +3,10 @@
 DEBUG = True
 
 import interfaces.pyglet
+import engine
+engine.load_modules()
 
-import game_defs
+import test_game
 
 import os.path
 
@@ -14,7 +16,7 @@ if os.path.exists('game.save'):
         game = pickle.load(f)
     print(game.events)
 else:
-    game = game_defs.init_game()
+    game = test_game.init_game()
 
 
 if __name__ == '__main__':

@@ -15,7 +15,6 @@ beasts_imgs = {
     'Carapuce': grounds_texgrid[45, 7],
 }
 
-
 import engine.meta
 
 @engine.meta.register('engine.event.Event')

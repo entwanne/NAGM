@@ -1,1 +1,10 @@
-__all__ = ['game', 'event', 'beast', 'character', 'object', 'zone', 'map', 'tile', 'player', 'battle', 'dialog', 'signals']
+__all__ = [
+    'meta',
+    'game', 'event', 'beast', 'character', 'object', 'zone',
+    'map', 'tile', 'player', 'battle', 'dialog', 'signals',
+]
+
+def load_modules():
+    from importlib import import_module
+    for modname in __all__:
+        import_module('.' + modname, __package__)
