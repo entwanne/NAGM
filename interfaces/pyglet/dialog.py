@@ -1,7 +1,7 @@
 import pyglet
 import engine.meta
 
-@engine.meta.register('engine.dialog.Dialog')
+@engine.meta.register('engine.dialog.Message')
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

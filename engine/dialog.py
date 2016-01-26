@@ -3,12 +3,11 @@ from . import meta
 
 @meta.apply
 class Dialog(GObject):
-    __attributes__ = GObject.__attributes__ + ('msg', 'dest', 'src')
+    __attributes__ = GObject.__attributes__ + ('dest', 'src')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('src', None)
         super().__init__(**kwargs)
-        print(self.msg)
         self.dest.dialog = self
         if self.src is not None:
             self.src.dialog = self
@@ -17,3 +16,19 @@ class Dialog(GObject):
         self.dest.dialog = None
         if self.src is not None:
             self.src.dialog = None
+
+@meta.apply
+class Message(Dialog):
+    __attributes__ = Dialog.__attributes__ + ('msg',)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print(self.msg)
+
+@meta.apply
+class Choice(Dialog):
+    __attributes__ = Dialog.__attributes__ + ('choices',)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print(self.choices)
