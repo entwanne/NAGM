@@ -1,7 +1,15 @@
 registered = {}
 
 class GObjectMeta(type):
-    pass
+    def __new__(cls, name, bases, dict):
+        attributes = ()
+        for base in bases:
+            if isinstance(base, cls):
+                attributes += base.__attributes__
+        if '__attributes__' in dict:
+            attributes += dict['__attributes__']
+        dict['__attributes__'] = attributes
+        return super().__new__(cls, name, bases, dict)
 
 def apply(cls):
     if not isinstance(cls, GObjectMeta):

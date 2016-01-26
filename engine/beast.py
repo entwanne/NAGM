@@ -7,7 +7,7 @@ from . import meta
 class BeastFamily(GObject):
     "Family of a beast: name, type, attacks, etc."
 
-    __attributes__ = GObject.__attributes__ + ('name', 'type')
+    __attributes__ = ('name', 'type')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -16,7 +16,7 @@ class BeastFamily(GObject):
 class Beast(Character):
     "All beasts (can be moving on the map, in their balls, etc.)"
 
-    __attributes__ = Character.__attributes__ + ('family', 'name', 'hp', 'attack_coef')
+    __attributes__ = ('family', 'name', 'hp', 'attack_coef')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('name', kwargs['family'].name)
@@ -35,7 +35,7 @@ class Beast(Character):
 class Beastiary(Object):
     "All catched beasts for a player"
 
-    __attributes__ = Object.__attributes__ + ('families', 'beasts')
+    __attributes__ = ('families', 'beasts')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('families', []) # found families

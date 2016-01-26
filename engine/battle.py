@@ -6,7 +6,7 @@ from . import meta
 class Battle(GObject):
     "Battle between two trainers (or beasts)"
 
-    __attributes__ = GObject.__attributes__ + ('trainers', 'beasts')
+    __attributes__ = ('trainers', 'beasts')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -19,7 +19,7 @@ class Grass(Tile):
 class HighGrass(Tile):
     "High grass (battles)"
 
-    __attributes__ = Tile.__attributes__ + ('zone',)
+    __attributes__ = ('zone',)
 
     traversable = True
     def __init__(self, **kwargs):
@@ -36,7 +36,7 @@ class HighGrass(Tile):
 class Teleport(Tile):
     "Teleport player"
 
-    __attributes__ = Tile.__attributes__ + ('pos', 'map_name')
+    __attributes__ = ('pos', 'map_name')
 
     traversable = True
     def __init__(self, **kwargs):
@@ -61,7 +61,7 @@ class Rock(Tile):
 class Stairs(Tile):
     "Stairs"
 
-    __attributes__ = Tile.__attributes__ + ('directions',)
+    __attributes__ = ('directions',)
     traversable = True
 
 @meta.apply

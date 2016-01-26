@@ -5,7 +5,7 @@ from . import meta
 class Character(Event):
     "All characters (can move)"
 
-    __attributes__ = Event.__attributes__ + ('direction', 'dialog')
+    __attributes__ = ('direction', 'dialog')
 
     traversable = False
 
@@ -56,7 +56,7 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
-    __attributes__ = Character.__attributes__ + ('battle',)
+    __attributes__ = ('battle',)
     __attributes__ += ('beast',) # to delete
 
     def __init__(self, **kwargs):

@@ -5,7 +5,7 @@ import time
 
 @meta.apply
 class Game(GObject):
-    __attributes__ = GObject.__attributes__ + ('maps', 'player', 'events')
+    __attributes__ = ('maps', 'player', 'events')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('maps', {})

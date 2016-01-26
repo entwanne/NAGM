@@ -5,7 +5,7 @@ from . import meta
 
 @meta.apply
 class Map(GObject):
-    __attributes__ = GObject.__attributes__ + ('width', 'height', 'levels', 'tiles', 'zones')
+    __attributes__ = ('width', 'height', 'levels', 'tiles', 'zones')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('zones', ())

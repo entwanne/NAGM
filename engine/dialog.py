@@ -3,7 +3,7 @@ from . import meta
 
 @meta.apply
 class Dialog(GObject):
-    __attributes__ = GObject.__attributes__ + ('dest', 'src')
+    __attributes__ = ('dest', 'src')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('src', None)
@@ -19,7 +19,7 @@ class Dialog(GObject):
 
 @meta.apply
 class Message(Dialog):
-    __attributes__ = Dialog.__attributes__ + ('msg',)
+    __attributes__ = ('msg',)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,7 +27,7 @@ class Message(Dialog):
 
 @meta.apply
 class Choice(Dialog):
-    __attributes__ = Dialog.__attributes__ + ('choices',)
+    __attributes__ = ('choices',)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

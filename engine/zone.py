@@ -8,7 +8,7 @@ class WildGroup(GObject):
     groups can reproduct, move to other zones, etc.
     """
 
-    __attributes__ = GObject.__attributes__ + ('family', 'population')
+    __attributes__ = ('family', 'population')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('population', 2)
@@ -22,7 +22,7 @@ import random, itertools, bisect
 class Zone(GObject):
     "Beast zones (where battle can be thrown)"
 
-    __attributes__ = GObject.__attributes__ + ('type', 'groups')
+    __attributes__ = ('type', 'groups')
 
     def __init__(self, **kwargs):
         #self.type = type # grass, water, etc.

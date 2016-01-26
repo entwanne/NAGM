@@ -5,7 +5,7 @@ from . import meta
 class Event(GObject):
     "All objects that can interact with player (on the map)"
 
-    __attributes__ = GObject.__attributes__ + ('position', 'map')
+    __attributes__ = ('position', 'map')
 
     traversable = True
     def __init__(self, **kwargs):
