@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 
 DEBUG = True
+INTERFACE = 'interfaces.pyglet'
+GAME = 'games.test_game'
 
-import interfaces.pyglet
+
+from importlib import import_module
+
+import_module(INTERFACE)
 import engine
 engine.load_modules()
 
-import test_game
+game_mod = import_module(GAME)
 
 import os.path
 
 if os.path.exists('game.save'):
     game = engine.game.Game.load('game.save')
 else:
-    game = test_game.init_game()
+    game = game_mod.init_game()
 
 
 if __name__ == '__main__':
@@ -25,7 +30,6 @@ if __name__ == '__main__':
                 game.run()
                 signal.pthread_kill(main_thread_id, signal.SIGQUIT)
         GameThread(daemon=True).start()
-        import engine
         code.interact(local={'game': game, 'engine': engine})
     else:
         game.run()
