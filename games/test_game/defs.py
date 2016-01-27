@@ -18,7 +18,4 @@ class BourgChar(engine.character.Character):
             return
         if not self.walk():
             dx, dy = self.direction
-            dc = dx + dy * 1j
-            dc *= 1j
-            dx, dy = int(dc.real), int(dc.imag)
-            self.turn(dx, dy)
+            self.turn(-dy, dx)
