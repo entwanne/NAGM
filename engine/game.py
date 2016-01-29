@@ -16,14 +16,11 @@ class Game(GObject):
     def run(self):
         while True:
             self.handle_signals()
+            self.step_events()
             time.sleep(0.3)
 
     def handle_signals(self):
         signals.handle_signals(self)
-
-    @staticmethod
-    def reg_signal(*args):
-        signals.reg_signal(*args)
 
     @staticmethod
     def have_signals():
@@ -36,6 +33,11 @@ class Game(GObject):
     @events.setter
     def events(self, value):
         event.events = value
+
+    def step_events(self):
+        for event in self.events:
+            if (event.map is None or event.map == self.player.map) and hasattr(event, 'step'):
+                event.step(self)
 
     def save(self, filename):
         import pickle

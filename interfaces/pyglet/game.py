@@ -65,9 +65,7 @@ class _:
                 self.signals_clock.reset()
             return
         if self.events_clock.finished:
-            for event in self.events:
-                if event.map == self.player.map and hasattr(event, 'step'):
-                    event.step(self)
+            self.step_events()
             self.events_clock.reset()
         if self.keyboard_clock.finished:
             dx, dy = 0, 0
