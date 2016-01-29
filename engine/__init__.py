@@ -1,5 +1,5 @@
 __all__ = [
-    'meta',
+    'meta', 'clock',
     'game', 'event', 'beast', 'character', 'object', 'zone',
     'map', 'tile', 'player', 'battle', 'dialog', 'signals', 'bind',
 ]

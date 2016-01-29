@@ -2,23 +2,6 @@ import pyglet
 import engine.meta
 
 
-import time
-class Clock:
-    def __init__(self, max=None):
-        self.reset()
-        self.max = max
-    def reset(self):
-        self.time = time.time()
-    @property
-    def elapsed(self):
-        return time.time() - self.time
-    @property
-    def finished(self):
-        if self.max is None:
-            return False
-        return self.elapsed > self.max
-
-
 @engine.meta.register('engine.game.Game')
 class _:
     def __init__(self, **kwargs):
@@ -36,6 +19,7 @@ class _:
         self.keys = pyglet.window.key.KeyStateHandler()
         self.window.push_handlers(self.keys)
 
+        from engine.clock import Clock
         tick = 0.3
         tick = 0.
         self.signals_clock = Clock(tick)

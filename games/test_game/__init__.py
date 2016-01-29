@@ -20,4 +20,13 @@ def init_game():
     game.player = player
     game.events.append(player)
 
+    timer = engine.event.Timer(
+        clock=engine.clock.Clock(2),
+        signal=engine.bind.callback(
+            game.events.append,
+            engine.bind._(BourgChar, position=(5,3,0), map=bourg)
+        )
+    )
+    game.events.append(timer)
+
     return game

@@ -21,4 +21,14 @@ class Event(GObject):
     def position(self, pos):
         self.x, self.y, self.z = pos
 
+@meta.apply
+class Timer(Event):
+    __attributes__ = ('clock', 'signal')
+
+    def step(self, game):
+        if not self.clock.finished:
+            return
+        game.events.remove(self)
+        self.send(self.signal)
+
 events = []
