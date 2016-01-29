@@ -10,7 +10,7 @@ class BourgChar(engine.character.Character):
         x, y, z = pos
         dx, dy = player.x - x, player.y - y
         self.turn(dx, dy)
-        engine.dialog.Message(msg='Hello', dest=player, src=self)
+        player.dialog = self.dialog = engine.dialog.spawn_messages('Hello', 'World', '!', signal=engine.bind.callback(self.set, dialog=None))
 
     def step(self, game):
         self.n = (self.n + 1) % 5

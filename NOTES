@@ -13,3 +13,10 @@ Une bordure en (3,2,0.5) sera affichée en (3,3), ce qui explique qu'en arrivant
 
 -> les demi-niveaux doivent-ils réellement être décalés ? doivent-ils réellement exister (peuvent être remplacés par des niveaux simples avec propriétés spéciales) ? ou décalage de moitié ?
 + penser aux bordures à franchir latéralement (gauche<->droite) : si un perso est en (3,2,0.5) et se déplace vers la gauche (qui est du niveau en-dessous, avec bordure), il se retrouve en (3,2,0): en coords 2D, cela donne (3,2.5) -> (2,2), alors que dans Pokémon, c'est plutôt (3,2) -> (1,2)
+
+============================
+
+Règles générales:
+
+- Instancier une classe ne change jamais le comportement du jeu (il faut pour cela la régler comme attribut d'un autre objet du jeu, ou l'ajouter à game.events, ou émettre un signal depuis cette classe, etc.) -> les classes de base, ne concerne pas les classes d'interface
+- Jamais 2 actions à la fois (utiliser signaux pour programmer la prochaine action)

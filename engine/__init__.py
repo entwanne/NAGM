@@ -1,7 +1,7 @@
 __all__ = [
     'meta',
     'game', 'event', 'beast', 'character', 'object', 'zone',
-    'map', 'tile', 'player', 'battle', 'dialog', 'signals',
+    'map', 'tile', 'player', 'battle', 'dialog', 'signals', 'bind',
 ]
 
 def load_modules():

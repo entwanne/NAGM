@@ -30,7 +30,7 @@ class HighGrass(Tile):
         beast = self.zone.maybe_beast()
         if beast is not None:
             Battle.from_args(player, beast)
-            Message(msg='A wild {} appears'.format(beast.name), dest=player)
+            player.dialog = Message(msg='A wild {} appears'.format(beast.name))
 
 @meta.apply
 class Teleport(Tile):
