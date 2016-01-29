@@ -2,6 +2,7 @@ from .gobject import GObject
 from . import event
 from .player import Player
 from . import meta
+from .signals import sighandler
 
 @meta.apply
 class Map(GObject):
@@ -63,6 +64,7 @@ class Map(GObject):
             self.traversables[pos] = traversable
         return traversable
 
+    @sighandler
     def moved(self, game, char, old_map, old_pos, pos):
         old_map.traversables[old_pos] = None
         self.traversables[pos] = None
@@ -71,6 +73,7 @@ class Map(GObject):
                 if hasattr(event, 'crossed'):
                     event.crossed(game, char, old_map, old_pos, self, pos)
 
+    @sighandler
     def action(self, game, player, pos):
         for event in self.on_case(pos):
             if hasattr(event, 'actioned'):

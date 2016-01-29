@@ -1,5 +1,6 @@
 from .gobject import GObject
 from . import meta
+from .signals import sighandler
 
 @meta.apply
 class Dialog(GObject):
@@ -12,6 +13,7 @@ class Dialog(GObject):
         if self.src is not None:
             self.src.dialog = self
 
+    @sighandler
     def action(self, game, player):
         self.dest.dialog = None
         if self.src is not None:

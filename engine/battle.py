@@ -1,6 +1,7 @@
 from .gobject import GObject
 from .beast import Beast
 from . import meta
+from .signals import sighandler
 
 @meta.apply
 class Battle(GObject):
@@ -24,6 +25,7 @@ class Battle(GObject):
         trainers, beasts = zip(*args)
         return cls(trainers=trainers, beasts=beasts)
 
+    @sighandler
     def action(self, game, player):
         if any(beast.ko for beast in self.beasts if beast):
             for trainer in self.trainers:
