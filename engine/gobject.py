@@ -13,6 +13,12 @@ class GObject(metaclass=GObjectMeta):
         if kwargs:
             raise TypeError('Unexpected attributes {}'.format(', '.join(kwargs.keys())))
 
+    def set(self, **kwargs):
+        for key, value in kwargs.items():
+            if key not in self.__attributes__:
+                raise TypeError('Unexpected attribute {}'.format(key))
+            setattr(self, key, value)
+
     def send(self, handler, *args, **kwargs):
         signals.send_signal(handler, self, *args, **kwargs)
 
