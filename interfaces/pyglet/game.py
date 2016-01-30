@@ -40,7 +40,7 @@ class _:
             self.player.map.batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)
         if self.player.dialog:
-            self.player.dialog.label.draw()
+            self.player.dialog.draw()
 
     def update(self, _dt):
         if self.have_signals():
@@ -70,6 +70,8 @@ class _:
                 self.keyboard_clock.reset()
 
     def key_press(self, key):
+        if self.player.dialog and hasattr(self.player.dialog, 'handle_key'):
+            self.player.dialog.handle_key(key)
         if key == pyglet.window.key.SPACE:
             self.player.action()
         elif key == pyglet.window.key.S:

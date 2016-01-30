@@ -31,15 +31,53 @@ class Message(Dialog):
 
 @meta.apply
 class Choice(Dialog):
-    __attributes__ = ('choices',)
+    __attributes__ = ('choices', 'signals', 'current')
 
     def __init__(self, **kwargs):
+        kwargs.setdefault('current', 0)
         super().__init__(**kwargs)
+        if len(self.choices) != len(self.signals):
+            raise ValueError("choices and signals parameters should have same length")
         print(self.choices)
 
-def spawn_messages(*messages, signal=None):
-    first, *messages = messages
-    for msg in reversed(messages):
-        cmsg = bind._(Message, msg=msg, signal=signal)
-        signal = bind.callback(GObject.set, bind._, dialog=cmsg)
-    return Message(msg=first, signal=signal)
+    @sighandler
+    def action(self, game, player):
+        super().action(game, player)
+        sig = self.signals[self.current]
+        if sig:
+            self.send(sig, player)
+
+def spawn_cls(arg, signal=None):
+    if isinstance(arg, str):
+        return (Message, {'msg': arg, 'signal': signal})
+    if isinstance(arg, tuple):
+        choices, signals = [], []
+        for choice in arg:
+            if isinstance(choice, tuple):
+                choice, *queue = choice
+                sig = spawn_signal(queue, signal)
+                choices.append(choice)
+                signals.append(sig)
+            else:
+                choices.append(choice)
+                signals.append(signal)
+        return (Choice, {'choices': tuple(choices), 'signals': tuple(signals)})
+    return (None, None)
+
+def spawn_signal(queue, signal=None):
+    for arg in reversed(queue):
+        cls, kwargs = spawn_cls(arg, signal)
+        if cls:
+            dialog = bind._(cls, **kwargs)
+            signal = bind.callback(GObject.set, bind._, dialog=dialog)
+        else:
+            signal = arg
+    return signal
+
+def spawn(*args):
+    first, *args = args
+    signal = spawn_signal(args)
+    cls, kwargs = spawn_cls(first, signal)
+    if cls:
+        return cls(**kwargs)
+    raise TypeError

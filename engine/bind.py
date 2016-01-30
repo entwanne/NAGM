@@ -80,6 +80,7 @@ def callback(f, *args, **kwargs):
     if is_sighandler(f):
         return SigCallback(f, args, kwargs)
     return Callback(f, args, kwargs)
+cb = callback
 
 class SugarBind(ArgBind):
     def __getstate__(self):

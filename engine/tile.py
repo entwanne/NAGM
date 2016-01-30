@@ -2,6 +2,7 @@ from .gobject import GObject
 from .battle import Battle
 from .dialog import Message
 from . import meta
+from .signals import sighandler
 
 @meta.apply
 class Tile(GObject):
@@ -26,6 +27,7 @@ class HighGrass(Tile):
         super().__init__(**kwargs)
         self.zone.area += 1
 
+    @sighandler
     def crossed(self, game, player, old_map, old_pos, map, pos):
         beast = self.zone.maybe_beast()
         if beast is not None:
@@ -43,6 +45,7 @@ class Teleport(Tile):
         kwargs.setdefault('map_name', None)
         super().__init__(**kwargs)
 
+    @sighandler
     def crossed(self, game, player, old_map, old_pos, map, pos):
         if old_map and isinstance(old_map.get_tile(old_pos), Teleport):
             return
@@ -68,6 +71,7 @@ class Stairs(Tile):
 class Hole(Tile):
     "Hole"
     traversable = True
+    @sighandler
     def crossed(self, game, player, old_map, old_pos, map, pos):
         x, y, z = pos
         player.move(x, y, z - 1)
