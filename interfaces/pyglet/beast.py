@@ -1,6 +1,6 @@
-from .resources import grounds_texgrid
+import pyglet
 
 textures = {
-    'Pikachu': grounds_texgrid[45, 4],
-    'Carapuce': grounds_texgrid[45, 7],
+    'Pikachu': pyglet.image.load('res/025.png'),
+    'Carapuce': pyglet.image.load('res/007.png'),
 }

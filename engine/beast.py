@@ -16,10 +16,11 @@ class BeastFamily(GObject):
 class Beast(Character):
     "All beasts (can be moving on the map, in their balls, etc.)"
 
-    __attributes__ = ('family', 'name', 'hp', 'attack_coef')
+    __attributes__ = ('family', 'name', 'max_hp', 'hp', 'attack_coef')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('name', kwargs['family'].name)
+        kwargs.setdefault('max_hp', 50)
         kwargs.setdefault('hp', 50)
         kwargs.setdefault('attack_coef', 10)
         super().__init__(**kwargs)
