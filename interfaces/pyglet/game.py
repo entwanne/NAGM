@@ -49,7 +49,7 @@ class _:
                 self.signals_clock.reset()
             return
         if self.events_clock.finished:
-            self.step_events()
+            self.step()
             self.events_clock.reset()
         if self.keyboard_clock.finished:
             dx, dy = 0, 0

@@ -1,6 +1,8 @@
 from .event import Event
 from . import meta
 
+import random
+
 @meta.apply
 class Character(Event):
     "All characters (can move)"
@@ -67,3 +69,7 @@ class Trainer(Character):
     @property
     def moveable(self):
         return self.battle is None and self.dialog is None
+
+    def battle_step(self, battle, beast):
+        att = random.choice(beast.attacks)
+        self.send(battle.attack, beast, att)

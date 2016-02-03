@@ -26,7 +26,7 @@ class _:
                         x=100*i, y=100*i,
                         batch=self.batch)
                 )
-            vertices, colors = get_bar(100*i, 100*i)
+            vertices, colors = get_bar(100*i, 100*i, beast.hp / beast.max_hp)
             self.health_bars.append(self.batch.add(4,
                            pyglet.gl.GL_QUADS,
                            None,
@@ -34,9 +34,8 @@ class _:
                            ('c4B', colors)
             ))
 
-    @sighandler
-    def action(self, *args, **kwargs):
-        super().action(*args, **kwargs)
+    def attack(self, *args, **kwargs):
+        super().attack(*args, **kwargs)
         for beast, bar in zip(self.beasts, self.health_bars):
             if not beast:
                 continue

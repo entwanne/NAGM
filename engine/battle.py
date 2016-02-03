@@ -1,5 +1,5 @@
 from .gobject import GObject
-from .beast import Beast
+from .character import Trainer
 from . import meta
 from .signals import sighandler
 
@@ -23,31 +23,51 @@ Dans un premier temps, ne pas implémenter les déplacements en combat ni les ob
 """
 
 @meta.apply
+class FakeTrainer(Trainer):
+    pass
+
+@meta.apply
 class Battle(GObject):
-    "Battle between two trainers (or beasts)"
+    "Battle between trainers"
 
     __attributes__ = ('trainers', 'beasts')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         for trainer in self.trainers:
-            if trainer:
-                trainer.battle = self
+            trainer.battle = self
+        self.turn = 0
+        self.turn_action = False
 
     @classmethod
     def from_args(cls, *args):
         args = (
-            (None, obj) if isinstance(obj, Beast)
-            else (obj, getattr(obj, 'beast', None))
+            (obj, obj.beast) if isinstance(obj, Trainer)
+            else (FakeTrainer(beast=obj), obj)
             for obj in args
         )
         trainers, beasts = zip(*args)
         return cls(trainers=trainers, beasts=beasts)
 
-    @sighandler
-    def action(self, game, player):
+    def attack(self, beast, att):
+        print(beast.name, 'uses', att.name)
+        i = self.beasts.index(beast)
+        beast.attack(att, self.beasts[not i])
+        self.turn_action = False
+
+    def step(self, game):
         if any(beast.ko for beast in self.beasts if beast):
             for trainer in self.trainers:
-                if trainer:
-                    trainer.battle = None
-        self.beasts[0].attack(self.beasts[1])
+                trainer.battle = None
+            return
+        if not self.turn_action:
+            self.turn_action = True
+            self.trainers[self.turn].battle_step(
+                self,
+                self.beasts[self.turn],
+            )
+            self.turn = (self.turn + 1) % len(self.trainers)
+
+    @sighandler
+    def action(self, game, player):
+        pass

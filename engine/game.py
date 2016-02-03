@@ -34,7 +34,9 @@ class Game(GObject):
     def events(self, value):
         event.events = value
 
-    def step_events(self):
+    def step(self):
+        if self.player.battle:
+            self.player.battle.step(self)
         for event in self.events:
             if (event.map is None or event.map == self.player.map) and hasattr(event, 'step'):
                 event.step(self)
