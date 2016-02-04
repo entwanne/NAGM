@@ -7,13 +7,12 @@ import random
 class Character(Event):
     "All characters (can move)"
 
-    __attributes__ = ('direction', 'dialog')
+    __attributes__ = ('direction',)
 
     traversable = False
 
     def __init__(self, **kwargs):
         kwargs.setdefault('direction', (0, -1))
-        kwargs.setdefault('dialog', None)
         super().__init__(**kwargs)
 
     def move(self, x, y, z=None, map=None):
@@ -52,7 +51,7 @@ class Character(Event):
 
     @property
     def moveable(self):
-        return self.dialog is None
+        return True
 
 @meta.apply
 class Trainer(Character):
@@ -68,7 +67,7 @@ class Trainer(Character):
 
     @property
     def moveable(self):
-        return self.battle is None and self.dialog is None
+        return super().moveable and self.battle is None
 
     def battle_step(self, battle, beast):
         att = random.choice(beast.attacks)

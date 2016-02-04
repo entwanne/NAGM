@@ -6,6 +6,15 @@ from .bind import callback
 @meta.apply
 class Player(Trainer):
     "Playable trainer(s)"
+
+    #__attributes__ = ('dialogs',)
+    __attributes__ = ('dialog',)
+
+    def __init__(self, **kwargs):
+        #kwargs.setdefault('dialogs', [])
+        kwargs.setdefault('dialog', None)
+        super().__init__(**kwargs)
+
     def action(self):
         if self.dialog:
             self.send(self.dialog.action)
@@ -22,3 +31,7 @@ class Player(Trainer):
         self.dialog = Choice(
             choices=('Attack', 'Fuite'),
             signals=(callback(self.set, dialog=attacks), callback(battle.end)))
+
+    @property
+    def moveable(self):
+        return super().moveable and self.dialog is None
