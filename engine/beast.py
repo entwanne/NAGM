@@ -8,23 +8,29 @@ from .attack import lutte
 class BeastFamily(GObject):
     "Family of a beast: name, type, attacks, etc."
 
-    __attributes__ = ('name', 'type', 'attacks')
+    __attributes__ = ('name', 'type', 'hp', 'att', 'dfse', 'attacks')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('attacks', (lutte,))
+        kwargs.setdefault('hp', 50)
+        kwargs.setdefault('att', 1)
+        kwargs.setdefault('dfse', 1)
         super().__init__(**kwargs)
 
 @meta.apply
 class Beast(Character):
     "All beasts (can be moving on the map, in their balls, etc.)"
 
-    __attributes__ = ('family', 'name', 'max_hp', 'hp', 'attacks')
+    __attributes__ = ('family', 'name', 'max_hp', 'hp', 'att', 'dfse', 'attacks')
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('name', kwargs['family'].name)
-        kwargs.setdefault('max_hp', 50)
-        kwargs.setdefault('hp', 50)
-        kwargs.setdefault('attacks', list(kwargs['family'].attacks))
+        f = kwargs['family']
+        kwargs.setdefault('name', f.name)
+        kwargs.setdefault('max_hp', f.hp)
+        kwargs.setdefault('hp', f.hp)
+        kwargs.setdefault('att', f.att)
+        kwargs.setdefault('dfse', f.dfse)
+        kwargs.setdefault('attacks', list(f.attacks))
         super().__init__(**kwargs)
 
     @property
@@ -34,13 +40,8 @@ class Beast(Character):
     def attack(self, att, beast):
         att.use(self, beast)
 
-    @property
-    def hp(self):
-        return self._hp
-
-    @hp.setter
-    def hp(self, value):
-        self._hp = max(value, 0)
+    def damages(self, hp):
+        self.hp = max(self.hp - hp, 0)
 
 @meta.apply
 class Beastiary(Object):

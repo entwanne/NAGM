@@ -16,7 +16,7 @@ def init_game():
     player = engine.player.Player(position=(0, 2, 0), map=bourg)
     player.beastiary = engine.beast.Beastiary()
     from .beasts import carapuce
-    player.beast = engine.beast.Beast(family=carapuce)
+    player.beast = engine.beast.Beast(family=carapuce, dfse=10)
     game.player = player
     game.events.append(player)
 
