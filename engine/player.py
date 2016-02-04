@@ -18,4 +18,7 @@ class Player(Trainer):
         attacks = ((att.name, callback(battle.attack, beast, att))
                    for att in beast.attacks)
         choices, signals = zip(*attacks)
-        self.dialog = Choice(choices=choices, signals=signals)
+        attacks = Choice(choices=choices, signals=signals)
+        self.dialog = Choice(
+            choices=('Attack', 'Fuite'),
+            signals=(callback(self.set, dialog=attacks), callback(battle.end)))

@@ -55,10 +55,13 @@ class Battle(GObject):
         beast.attack(att, self.beasts[not i])
         self.turn_action = False
 
+    def end(self):
+        for trainer in self.trainers:
+            trainer.battle = None
+
     def step(self, game):
         if any(beast.ko for beast in self.beasts if beast):
-            for trainer in self.trainers:
-                trainer.battle = None
+            self.end()
             return
         if not self.turn_action:
             self.turn_action = True
