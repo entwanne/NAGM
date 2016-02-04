@@ -16,9 +16,8 @@ class BourgChar(engine.character.Character):
         x, y, z = pos
         dx, dy = player.x - x, player.y - y
         self.turn(dx, dy)
-        #player.dialog = self.dialog = engine.dialog.spawn('Hello', 'World', '!', bind.cb(self.set, dialog=None))
         self.moving = False
-        player.dialog = engine.dialog.spawn('Hello', 'World', '!', bind.cb(self.set, moving=True))
+        engine.dialog.spawn(player, 'Hello', 'World', '!', signal=bind.cb(self.set, moving=True))
 
     def step(self, game):
         self.n = (self.n + 1) % 5
@@ -36,10 +35,8 @@ class BourgChar2(BourgChar):
     @sighandler
     def actioned(self, game, player, map, pos):
         self.moving = False
-        player.dialog = self.dialog = engine.dialog.spawn(
-            (
-                ('oui', 'cool'),
-                ('non',)
-            ),
-            bind.cb(self.set, moving=True)
-        )
+        sig = bind.cb(self.set, moving=True)
+        engine.dialog.spawn_choice(
+            player,
+            ('oui', bind.cb(engine.dialog.spawn, bind._, 'cool', signal=sig)),
+            ('non', sig))

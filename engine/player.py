@@ -7,12 +7,10 @@ from .bind import callback
 class Player(Trainer):
     "Playable trainer(s)"
 
-    #__attributes__ = ('dialogs',)
-    __attributes__ = ('dialog',)
+    __attributes__ = ('dialogs',)
 
     def __init__(self, **kwargs):
-        #kwargs.setdefault('dialogs', [])
-        kwargs.setdefault('dialog', None)
+        kwargs.setdefault('dialogs', [])
         super().__init__(**kwargs)
 
     def action(self):
@@ -28,10 +26,18 @@ class Player(Trainer):
                    for att in beast.attacks)
         choices, signals = zip(*attacks)
         attacks = Choice(choices=choices, signals=signals)
-        self.dialog = Choice(
+        self.add_dialog(Choice(
             choices=('Attack', 'Fuite'),
-            signals=(callback(self.set, dialog=attacks), callback(battle.end)))
+            signals=(callback(self.add_dialog, attacks), callback(battle.end))))
 
     @property
     def moveable(self):
-        return super().moveable and self.dialog is None
+        return super().moveable and not self.dialogs
+
+    @property
+    def dialog(self):
+        if self.dialogs:
+            return self.dialogs[0]
+
+    def add_dialog(self, dialog):
+        self.dialogs.append(dialog)

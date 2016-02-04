@@ -1,6 +1,6 @@
 from .gobject import GObject
 from .battle import Battle
-from .dialog import Message
+from . import dialog
 from . import meta
 from .signals import sighandler
 
@@ -32,7 +32,7 @@ class HighGrass(Tile):
         beast = self.zone.maybe_beast()
         if beast is not None:
             Battle.from_args(player, beast)
-            player.dialog = Message(msg='A wild {} appears'.format(beast.name))
+            dialog.spawn(player, 'A wild {} appears'.format(beast.name))
 
 @meta.apply
 class Teleport(Tile):

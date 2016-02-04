@@ -12,7 +12,7 @@ class Dialog(GObject):
 
     @sighandler
     def action(self, game, player):
-        player.dialog = None
+        player.dialogs.remove(self)
 
 @meta.apply
 class Message(Dialog):
@@ -47,37 +47,13 @@ class Choice(Dialog):
         if sig:
             self.send(sig, player)
 
-def spawn_cls(arg, signal=None):
-    if isinstance(arg, str):
-        return (Message, {'msg': arg, 'signal': signal})
-    if isinstance(arg, tuple):
-        choices, signals = [], []
-        for choice in arg:
-            if isinstance(choice, tuple):
-                choice, *queue = choice
-                sig = spawn_signal(queue, signal)
-                choices.append(choice)
-                signals.append(sig)
-            else:
-                choices.append(choice)
-                signals.append(signal)
-        return (Choice, {'choices': tuple(choices), 'signals': tuple(signals)})
-    return (None, None)
+def spawn(player, *dialogs, signal=None):
+    *dialogs, last = dialogs
+    for dialog in dialogs:
+        player.add_dialog(Message(msg=dialog))
+    player.add_dialog(Message(msg=last, signal=signal))
 
-def spawn_signal(queue, signal=None):
-    for arg in reversed(queue):
-        cls, kwargs = spawn_cls(arg, signal)
-        if cls:
-            dialog = bind._(cls, **kwargs)
-            signal = bind.callback(GObject.set, bind._, dialog=dialog)
-        else:
-            signal = arg
-    return signal
-
-def spawn(*args):
-    first, *args = args
-    signal = spawn_signal(args)
-    cls, kwargs = spawn_cls(first, signal)
-    if cls:
-        return cls(**kwargs)
-    raise TypeError
+def spawn_choice(player, *choices, signal=None):
+    choices = ((c, None) if isinstance(c, str) else c for c in choices)
+    choices, signals = zip(*choices)
+    player.add_dialog(Choice(choices=choices, signals=signals))
