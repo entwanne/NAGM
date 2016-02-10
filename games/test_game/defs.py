@@ -10,6 +10,11 @@ class BourgChar(engine.character.Character):
         kwargs.setdefault('moving', True)
         super().__init__(**kwargs)
         self.n = 0
+        self.messages = [
+            engine.dialog.Message(msg='Hello'),
+            engine.dialog.Message(msg='World'),
+            engine.dialog.Message(msg='!', signal=bind.cb(self.set, moving=True)),
+        ]
 
     @sighandler
     def actioned(self, game, player, map, pos):
@@ -17,7 +22,7 @@ class BourgChar(engine.character.Character):
         dx, dy = player.x - x, player.y - y
         self.turn(dx, dy)
         self.moving = False
-        engine.dialog.spawn(player, 'Hello', 'World', '!', signal=bind.cb(self.set, moving=True))
+        engine.dialog.spawn(player, *self.messages)
 
     def step(self, game):
         self.n = (self.n + 1) % 5
@@ -32,11 +37,16 @@ class BourgChar(engine.character.Character):
         return super().moveable and self.moving
 
 class BourgChar2(BourgChar):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        sig = bind.cb(self.set, moving=True)
+        self.message = engine.dialog.Message(msg='cool', signal=sig)
+        self.choice = engine.dialog.Choice(
+            choices=('oui', 'non'),
+            signals=(bind.cb(engine.dialog.spawn, bind._, self.message), sig),
+        )
+
     @sighandler
     def actioned(self, game, player, map, pos):
         self.moving = False
-        sig = bind.cb(self.set, moving=True)
-        engine.dialog.spawn_choice(
-            player,
-            ('oui', bind.cb(engine.dialog.spawn, bind._, 'cool', signal=sig)),
-            ('non', sig))
+        player.add_dialog(self.choice)

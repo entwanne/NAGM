@@ -21,7 +21,6 @@ class Message(Dialog):
     def __init__(self, **kwargs):
         kwargs.setdefault('signal', None)
         super().__init__(**kwargs)
-        print(self.msg)
 
     @sighandler
     def action(self, game, player):
@@ -38,22 +37,16 @@ class Choice(Dialog):
         super().__init__(**kwargs)
         if len(self.choices) != len(self.signals):
             raise ValueError("choices and signals parameters should have same length")
-        print(self.choices)
 
     @sighandler
     def action(self, game, player):
         super().action(game, player)
         sig = self.signals[self.current]
         if sig:
-            self.send(sig, player)
+            self.send(sig, player, self.current)
 
-def spawn(player, *dialogs, signal=None):
-    *dialogs, last = dialogs
+def spawn(player, *dialogs):
     for dialog in dialogs:
-        player.add_dialog(Message(msg=dialog))
-    player.add_dialog(Message(msg=last, signal=signal))
-
-def spawn_choice(player, *choices, signal=None):
-    choices = ((c, None) if isinstance(c, str) else c for c in choices)
-    choices, signals = zip(*choices)
-    player.add_dialog(Choice(choices=choices, signals=signals))
+        if not isinstance(dialog, Dialog):
+            dialog = Message(msg=dialog)
+        player.add_dialog(dialog)
