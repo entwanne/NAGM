@@ -13,11 +13,18 @@ def init_game():
     game.events.append(BourgChar(position=(1,16,0), map=bourg))
     #event.events.append(object.Object())
 
-    player = engine.player.Player(position=(0, 2, 0), map=bourg)
+    player = engine.player.Player(name='Red', position=(0, 2, 0), map=bourg)
     player.beastiary = engine.beast.Beastiary()
     from .beasts import carapuce
     player.beast = engine.beast.Beast(family=carapuce, dfse=10)
-    game.player = player
+    game.players.append(player)
+    game.events.append(player)
+
+    player = engine.player.Player(name='Blue', position=(0, 2, 0), map=bourg)
+    player.beastiary = engine.beast.Beastiary()
+    from .beasts import pikachu
+    player.beast = engine.beast.Beast(family=pikachu, dfse=10)
+    game.players.append(player)
     game.events.append(player)
 
     timer = engine.event.Timer(

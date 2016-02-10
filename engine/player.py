@@ -1,13 +1,14 @@
 from .character import Trainer
 from . import meta
-from .dialog import Choice
+from .dialog import Message, Choice
 from .bind import callback
+from .signals import sighandler
 
 @meta.apply
 class Player(Trainer):
     "Playable trainer(s)"
 
-    __attributes__ = ('dialogs',)
+    __attributes__ = ('name', 'dialogs',)
 
     def __init__(self, **kwargs):
         kwargs.setdefault('dialogs', [])
@@ -41,3 +42,7 @@ class Player(Trainer):
 
     def add_dialog(self, dialog):
         self.dialogs.append(dialog)
+
+    @sighandler
+    def actioned(self, game, player, map, pos):
+        player.add_dialog(Message(msg="Hello, I'm {}".format(self.name)))

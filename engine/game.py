@@ -5,11 +5,11 @@ import time
 
 @meta.apply
 class Game(GObject):
-    __attributes__ = ('maps', 'player', 'events')
+    __attributes__ = ('maps', 'players', 'events')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('maps', {})
-        kwargs.setdefault('player', None)
+        kwargs.setdefault('players', [])
         kwargs.setdefault('events', [])
         super().__init__(**kwargs)
 
@@ -35,10 +35,11 @@ class Game(GObject):
         event.events = value
 
     def step(self):
-        if self.player.battle:
-            self.player.battle.step(self)
+        for player in self.players:
+            if player.battle:
+                player.battle.step(self)
         for event in self.events:
-            if (event.map is None or event.map == self.player.map) and hasattr(event, 'step'):
+            if (event.map is None or any(event.map == player.map for player in self.players)) and hasattr(event, 'step'):
                 event.step(self)
 
     def save(self, filename):

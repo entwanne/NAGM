@@ -28,19 +28,28 @@ class _:
         #pyglet.clock.schedule(self.update)
         pyglet.clock.schedule_interval(self.update, 0.1)
 
+        self._ui_player = None
+
+    @property
+    def ui_player(self):
+        if not self._ui_player:
+            self._ui_player = self.players[0]
+        return self._ui_player
+
     def draw(self):
+        p = self.ui_player
         self.window.clear()
-        if self.player.battle:
-            self.player.battle.batch.draw()
-        elif self.player.map:
-            sprite = self.player.sprites[0]
+        if p.battle:
+            p.battle.batch.draw()
+        elif p.map:
+            sprite = p.sprites[0]
             dx = (self.window.width - sprite.width) // 2 - sprite.x
             dy = (self.window.height - sprite.height) // 2 - sprite.y
             pyglet.gl.glTranslatef(dx, dy, 0)
-            self.player.map.batch.draw()
+            p.map.batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)
-        if self.player.dialog:
-            self.player.dialog.draw()
+        if p.dialog:
+            p.dialog.draw()
 
     def update(self, _dt):
         if self.have_signals():
@@ -62,20 +71,26 @@ class _:
             elif self.keys.get(pyglet.window.key.DOWN):
                 dy = -1
             if dx or dy:
-                if self.player.direction == (dx, dy):
-                    self.player.walk()
+                p = self.ui_player
+                if p.direction == (dx, dy):
+                    p.walk()
                 else:
-                    self.player.turn(dx, dy)
+                    p.turn(dx, dy)
                 self.signals_clock.reset()
                 self.keyboard_clock.reset()
 
     def key_press(self, key):
-        if self.player.dialog and hasattr(self.player.dialog, 'handle_key'):
-            self.player.dialog.handle_key(key)
+        p = self.ui_player
+        if p.dialog and hasattr(p.dialog, 'handle_key'):
+            p.dialog.handle_key(key)
         if key == pyglet.window.key.SPACE:
-            self.player.action()
+            p.action()
         elif key == pyglet.window.key.S:
             self.save('game.save')
+        elif key == pyglet.window.key.P:
+            i = self.players.index(self._ui_player)
+            i = (i + 1) % len(self.players)
+            self._ui_player = self.players[i]
 
 
     def run(self):
