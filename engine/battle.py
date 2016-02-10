@@ -30,14 +30,14 @@ class FakeTrainer(Trainer):
 class Battle(GObject):
     "Battle between trainers"
 
-    __attributes__ = ('trainers', 'beasts')
+    __attributes__ = ('trainers', 'beasts', 'turn', 'waiting')
 
     def __init__(self, **kwargs):
+        kwargs.setdefault('turn', 0)
+        kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
         for trainer in self.trainers:
             trainer.battle = self
-        self.turn = 0
-        self.turn_action = False
 
     @classmethod
     def from_args(cls, *args):
@@ -53,7 +53,7 @@ class Battle(GObject):
         print(beast.name, 'uses', att.name)
         i = self.beasts.index(beast)
         beast.attack(att, self.beasts[not i])
-        self.turn_action = False
+        self.waiting = False
 
     def end(self):
         for trainer in self.trainers:
@@ -63,8 +63,8 @@ class Battle(GObject):
         if any(beast.ko for beast in self.beasts if beast):
             self.end()
             return
-        if not self.turn_action:
-            self.turn_action = True
+        if not self.waiting:
+            self.waiting = True
             self.trainers[self.turn].battle_step(
                 self,
                 self.beasts[self.turn],
