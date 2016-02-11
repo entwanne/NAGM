@@ -67,6 +67,7 @@ class Stairs(Tile):
     __attributes__ = ('directions',)
     traversable = True
 
+# deprecated
 @meta.apply
 class Hole(Tile):
     "Hole"
@@ -75,3 +76,13 @@ class Hole(Tile):
     def crossed(self, game, player, old_map, old_pos, map, pos):
         x, y, z = pos
         player.move(x, y, z - 1)
+
+@meta.apply
+class Edge(Tile):
+    "Edge"
+    traversable = True
+    directions = {(0, -1): (0, -1, -1)}
+
+@meta.apply
+class Water(Tile):
+    pass
