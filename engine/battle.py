@@ -20,6 +20,12 @@ Dans le second, elle crée une boîte de dialogue Choice associée aux bons sign
 Les signaux auront comme receveur des méthodes permettant d'utiliser une attaque ou un objet.
 
 Dans un premier temps, ne pas implémenter les déplacements en combat ni les objets, simplement un combat tour par tour.
+
+-> Voir la Battle comme une Map
+-> mais comment faire en sorte que le joueur en combat ne quitte pas sa map actuelle ?
+  - utiliser un autre event (ghost) pour mettre à la place ?
+  - méthodes pour créer un ghost et pour reprendre sa place
+  - les ghosts sont de simple events (n'intéragissent pas, ne se déplacent pas) non traversables
 """
 
 @meta.apply
@@ -37,6 +43,7 @@ class Battle(GObject):
         kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
         for trainer in self.trainers:
+            trainer.ghostify()
             trainer.battle = self
 
     @classmethod
@@ -58,6 +65,7 @@ class Battle(GObject):
     def end(self):
         for trainer in self.trainers:
             trainer.battle = None
+            trainer.pop_ghost()
 
     def step(self, game):
         if any(beast.ko for beast in self.beasts if beast):

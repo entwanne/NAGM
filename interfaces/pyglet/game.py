@@ -91,7 +91,11 @@ class _:
             i = self.players.index(self._ui_player)
             i = (i + 1) % len(self.players)
             self._ui_player = self.players[i]
-
+        elif key == pyglet.window.key.G:
+            if p.ghost:
+                p.pop_ghost()
+            else:
+                p.ghostify()
 
     def run(self):
         pyglet.app.run()

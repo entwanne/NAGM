@@ -3,13 +3,14 @@ import engine.meta
 
 from .resources import players_texgrid
 
+@engine.meta.register('engine.character.Ghost')
 @engine.meta.register('engine.character.Character')
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._sprites = ()
         self.sprites_map = None
-        self.calc_sprite_offset(self.dx, self.dy)
+        self.calc_sprite_offset(*self.direction)
         self.sprites # compute sprites
 
     def move(self, *args, **kwargs):

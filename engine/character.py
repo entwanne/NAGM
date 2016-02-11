@@ -1,11 +1,12 @@
 from .event import Event
+from . import event
 from . import meta
 
 import random
 
 @meta.apply
-class Character(Event):
-    "All characters (can move)"
+class Ghost(Event):
+    "Disabled character"
 
     __attributes__ = ('direction',)
 
@@ -13,6 +14,19 @@ class Character(Event):
 
     def __init__(self, **kwargs):
         kwargs.setdefault('direction', (0, -1))
+        super().__init__(**kwargs)
+
+@meta.apply
+class Character(Event):
+    "All characters (can move)"
+
+    __attributes__ = ('direction', 'ghost')
+
+    traversable = False
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('direction', (0, -1))
+        kwargs.setdefault('ghost', None)
         super().__init__(**kwargs)
 
     def move(self, x, y, z=None, map=None):
@@ -39,19 +53,27 @@ class Character(Event):
         return True
 
     def walk(self):
+        if not self.map:
+            return False
         return self.move(*self.map.walk_position(self.position, self.direction))
-
-    @property
-    def direction(self):
-        return (self.dx, self.dy)
-
-    @direction.setter
-    def direction(self, dir):
-        self.dx, self.dy = dir
 
     @property
     def moveable(self):
         return True
+
+    def ghostify(self):
+        if self.ghost:
+            return
+        self.ghost = Ghost(position=self.position, direction=self.direction, map=self.map)
+        self.map = None
+        event.events.append(self.ghost)
+
+    def pop_ghost(self):
+        if not self.ghost:
+            return
+        ghost, self.ghost = self.ghost, None
+        self.map, self.position, self.direction = ghost.map, ghost.position, ghost.direction
+        event.events.remove(ghost)
 
 @meta.apply
 class Trainer(Character):

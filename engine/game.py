@@ -35,6 +35,7 @@ class Game(GObject):
         event.events = value
 
     def step(self):
+        # step active maps and events on these maps
         for player in self.players:
             if player.battle:
                 player.battle.step(self)
