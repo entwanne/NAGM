@@ -1,6 +1,9 @@
 import engine
 from .zones import zone
 
+Edge = engine.tile.over(engine.tile.Grass, engine.tile.Edge)
+Water = engine.tile.over(engine.tile.Grass, engine.tile.Water)
+
 tile_chars = {
     '.': engine.tile.Grass,
     '*': lambda: engine.tile.HighGrass(zone=zone),
@@ -8,10 +11,10 @@ tile_chars = {
     'x': engine.tile.Rock,
     '=': lambda: engine.tile.Stairs(directions={(0, 1): (0, 0, 1)}),
     '#': lambda: engine.tile.Stairs(directions={(0, -1): (0, 0, -1)}),
-    '-': engine.tile.Edge,
+    '-': Edge,
     '>': lambda: engine.tile.Teleport(pos=(4,0), map_name='road'),
     '<': lambda: engine.tile.Teleport(pos=(3,17), map_name='bourg'),
-    '~': engine.tile.Water,
+    '~': Water,
 }
 
 def make_tiles(str_tiles):

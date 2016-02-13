@@ -4,8 +4,16 @@ from . import dialog
 from . import meta
 from .signals import sighandler
 
+class TileMeta(meta.GObjectMeta):
+    def __instancecheck__(self, tile):
+        if super().__instancecheck__(tile):
+            return True
+        if hasattr(tile, '__isinstance__'):
+            return tile.__isinstance__(self)
+        return False
+
 @meta.apply
-class Tile(GObject):
+class Tile(GObject, metaclass=TileMeta):
     """All tiles ("voxels") on a map
     have some properties: traversable, etc.
     """
@@ -86,3 +94,31 @@ class Edge(Tile):
 @meta.apply
 class Water(Tile):
     pass
+
+@meta.apply
+class Over(Tile):
+    __attributes__ = ('tiles',)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.traversable = self.tiles[-1].traversable
+
+    def __isinstance__(self, cls):
+        return any(isinstance(tile, cls) for tile in self.tiles)
+
+    def __getattribute__(self, name):
+        try:
+            return super().__getattribute__(name)
+        except AttributeError as e:
+            for tile in self.tiles:
+                if hasattr(tile, name):
+                    return getattr(tile, name)
+            raise e
+
+class over:
+    def __init__(self, *tiles_cls):
+        self.tiles_cls = tiles_cls
+
+    def __call__(self, **kwargs):
+        kwargs['tiles'] = tuple(cls() for cls in self.tiles_cls)
+        return Over(**kwargs)

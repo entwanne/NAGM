@@ -13,6 +13,8 @@ class _:
             for y, line in enumerate(level):
                 for x, tile in enumerate(line):
                     tile.refresh(self, (x, y, z))
+                    if tile.img is None:
+                        continue
                     tile.sprite = pyglet.sprite.Sprite(
                         tile.img,
                         x=x*16, y=(y+z)*16,

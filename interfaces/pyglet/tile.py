@@ -1,14 +1,13 @@
 import engine.meta
 
-from .resources import grounds_texgrid, trees_texgrid
+from .resources import grounds_texgrid, trees_texgrid, get_empty_tile
 
 @engine.meta.register('engine.tile.Tile')
 class _:
-    img = grounds_texgrid[0, 0]
+    img = None
     def refresh(self, map, pos): pass
 
 @engine.meta.register('engine.tile.Grass')
-@engine.meta.register('engine.tile.Edge')
 class _:
     img = grounds_texgrid[49, 0]
 
@@ -21,22 +20,22 @@ class _:
     img = grounds_texgrid[48, 4]
 
 @engine.meta.register('engine.tile.Tree')
-class Tree:
+class _:
     Y, X = 47, 0
     left = True
     trunk = True
     def refresh(self, map, pos):
         x, y, z = pos
         xtile = map.get_tile((x - 1, y, z))
-        if isinstance(xtile, Tree) and xtile.left:
+        if isinstance(xtile, engine.tile.Tree) and xtile.left:
             self.left = False
             self.X += 1
         ytile = map.get_tile((x, y - 1, z))
-        if isinstance(ytile, Tree) and ytile.trunk:
+        if isinstance(ytile, engine.tile.Tree) and ytile.trunk:
             self.trunk = False
             self.Y += 1
         ztile = map.get_tile((x, y, z - 1))
-        if isinstance(ztile, Tree):
+        if isinstance(ztile, engine.tile.Tree):
             if self.trunk:
                 self.X, self.Y = 0, 0
             else:
@@ -51,7 +50,7 @@ class _:
     img = grounds_texgrid[32, 1]
 
 @engine.meta.register('engine.tile.Stairs')
-class Stairs:
+class _:
     img = grounds_texgrid[49, 0]
     def refresh(self, map, pos):
         x, y, z = pos
@@ -59,7 +58,7 @@ class Stairs:
             self.img = grounds_texgrid[49, 7]
 
 @engine.meta.register('engine.tile.Water')
-class Water:
+class _:
     imgs = {
         # left, right, down, up
         # True = not water
@@ -75,7 +74,15 @@ class Water:
     img = grounds_texgrid[42, 4]
     def refresh(self, map, pos):
         x, y, z = pos
-        nexts = tuple(not isinstance(map.get_tile((x + dx, y + dy, z)), Water)
+        nexts = tuple(not isinstance(map.get_tile((x + dx, y + dy, z)), engine.tile.Water)
                       for (dx, dy) in zip((-1, 1, 0, 0), (0, 0, -1, 1)))
         if nexts in self.imgs:
             self.img = self.imgs[nexts]
+
+@engine.meta.register('engine.tile.Over')
+class _:
+    def refresh(self, map, pos):
+        for tile in self.tiles:
+            tile.refresh(map, pos)
+            if tile.img is not None:
+                self.img = tile.img

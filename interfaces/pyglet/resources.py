@@ -9,3 +9,6 @@ trees_texgrid = pyglet.image.TextureGrid(trees_imggrid)
 players_img = pyglet.image.load('res/persos.png')
 players_imggrid = pyglet.image.ImageGrid(players_img, 2, 12)
 players_texgrid = pyglet.image.TextureGrid(players_imggrid)
+
+def get_empty_tile():
+    return pyglet.image.Texture.create(16, 16)
