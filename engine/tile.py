@@ -4,6 +4,12 @@ from . import dialog
 from . import meta
 from .signals import sighandler
 
+from enum import Enum
+
+class Ground(Enum):
+    GROUND = 0
+    WATER = 1
+
 class TileMeta(meta.GObjectMeta):
     def __instancecheck__(self, tile):
         if super().__instancecheck__(tile):
@@ -18,6 +24,7 @@ class Tile(GObject, metaclass=TileMeta):
     have some properties: traversable, etc.
     """
     traversable = False
+    ground = Ground.GROUND
 
 @meta.apply
 class Grass(Tile):
@@ -93,7 +100,15 @@ class Edge(Tile):
 
 @meta.apply
 class Water(Tile):
-    pass
+    "Water"
+    traversable = False
+    ground = Ground.WATER
+    msg = dialog.Message(msg="Wanna surfin'?")
+    choice = dialog.Choice(choices=('oui', 'non'), signals=(None, None))
+
+    @sighandler
+    def actioned(self, game, player, map, pos):
+        dialog.spawn(player, self.msg, self.choice)
 
 @meta.apply
 class Over(Tile):
