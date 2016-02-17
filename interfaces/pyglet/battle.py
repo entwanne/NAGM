@@ -15,28 +15,30 @@ class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.batch = pyglet.graphics.Batch()
-        self.sprites = []
-        self.health_bars = []
+        self.__sprites = []
+        self.__health_bars = []
         for i, beast in enumerate(self.beasts):
             print(beast)
             if beast and beast.family.name in beasts_imgs:
-                self.sprites.append(
+                self.__sprites.append(
                     pyglet.sprite.Sprite(
                         beasts_imgs[beast.family.name],
                         x=100*i, y=100*i,
                         batch=self.batch)
                 )
             vertices, colors = get_bar(100*i, 100*i, beast.hp / beast.max_hp)
-            self.health_bars.append(self.batch.add(4,
-                           pyglet.gl.GL_QUADS,
-                           None,
-                           ('v2i', vertices),
-                           ('c4B', colors)
-            ))
+            self.__health_bars.append(
+                self.batch.add(4,
+                               pyglet.gl.GL_QUADS,
+                               None,
+                               ('v2i', vertices),
+                               ('c4B', colors)
+                           )
+            )
 
     def attack(self, *args, **kwargs):
         super().attack(*args, **kwargs)
-        for beast, bar in zip(self.beasts, self.health_bars):
+        for beast, bar in zip(self.beasts, self.__health_bars):
             if not beast:
                 continue
             x, y, *_ = bar.vertices

@@ -21,29 +21,29 @@ class _:
 
 @engine.meta.register('engine.tile.Tree')
 class _:
-    Y, X = 47, 0
-    left = True
-    trunk = True
+    __Y, __X = 47, 0
+    __left = True
+    __trunk = True
     def refresh(self, map, pos):
         x, y, z = pos
         xtile = map.get_tile((x - 1, y, z))
-        if isinstance(xtile, engine.tile.Tree) and xtile.left:
-            self.left = False
-            self.X += 1
+        if isinstance(xtile, engine.tile.Tree) and xtile.__left:
+            self.__left = False
+            self.__X += 1
         ytile = map.get_tile((x, y - 1, z))
-        if isinstance(ytile, engine.tile.Tree) and ytile.trunk:
-            self.trunk = False
-            self.Y += 1
+        if isinstance(ytile, engine.tile.Tree) and ytile.__trunk:
+            self.__trunk = False
+            self.__Y += 1
         ztile = map.get_tile((x, y, z - 1))
         if isinstance(ztile, engine.tile.Tree):
-            if self.trunk:
-                self.X, self.Y = 0, 0
+            if self.__trunk:
+                self.__X, self.__Y = 0, 0
             else:
-                self.Y += 1
+                self.__Y += 1
 
     @property
     def img(self):
-        return trees_texgrid[self.Y, self.X]
+        return trees_texgrid[self.__Y, self.__X]
 
 @engine.meta.register('engine.tile.Rock')
 class _:

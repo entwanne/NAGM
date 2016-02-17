@@ -8,10 +8,11 @@ from .resources import players_texgrid
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._sprites = ()
-        self.sprites_map = None
-        self.calc_sprite_offset(*self.direction)
-        self.sprites # compute sprites
+        self.__sprites = ()
+        self.__sprites_map = None
+        self.__walk_offsets = [0, 1, 0, 2]
+        self.__sprite_offset = 0
+        self.__calc_sprites_offset(False)
 
     def move(self, *args, **kwargs):
         old_z = self.z
@@ -27,33 +28,39 @@ class _:
         olddir = self.direction
         ret = super().turn(dx, dy)
         if ret and self.direction != olddir:
-            self.calc_sprite_offset(dx, dy)
-            for z, sprite in enumerate(self.sprites):
-                sprite.image = players_texgrid[z, self.sprite_offset]
+            self.__calc_sprites_offset()
+        return ret
+
+    def walk(self):
+        ret = super().walk()
+        if ret or self.moveable:
+            self.__walk_offsets.append(self.__walk_offsets.pop(0))
+            self.__calc_sprites_offset()
         return ret
 
     @property
     def sprites(self):
-        if self.map is self.sprites_map:
-            return self._sprites
+        if self.map is self.__sprites_map:
+            return self.__sprites
         map = self.map
         if map is None:
-            self._sprites = ()
+            self.__sprites = ()
         else:
-            self._sprites = (
+            self.__sprites = (
                 pyglet.sprite.Sprite(
-                    players_texgrid[0, self.sprite_offset],
+                    players_texgrid[0, self.__sprite_offset],
                     x=self.x*16, y=(self.y+self.z)*16,
                     batch=map.batch, group=map.event_groups[self.z]),
                 pyglet.sprite.Sprite(
-                    players_texgrid[1, self.sprite_offset],
+                    players_texgrid[1, self.__sprite_offset],
                     x=self.x*16, y=(self.y+self.z+1)*16,
                     batch=map.batch, group=map.event_groups[self.z+1]),
             )
-        self.sprites_map = map
-        return self._sprites
+        self.__sprites_map = map
+        return self.__sprites
 
-    def calc_sprite_offset(self, dx, dy):
+    def __calc_sprites_offset(self, update=True):
+        dx, dy = self.direction
         if dx > 0:
             off = 0
         elif dx < 0:
@@ -62,4 +69,9 @@ class _:
             off = 3
         else:
             off = 9
-        self.sprite_offset = off
+        off += self.__walk_offsets[0]
+        self.__sprite_offset = off
+        sprites = self.sprites
+        if update:
+            for z, sprite in enumerate(sprites):
+                sprite.image = players_texgrid[z, off]
