@@ -2,6 +2,7 @@ __all__ = [
     'meta', 'clock',
     'game', 'event', 'beast', 'character', 'object', 'zone',
     'map', 'tile', 'player', 'battle', 'dialog', 'signals', 'bind',
+    'mixins',
 ]
 
 def load_modules():
