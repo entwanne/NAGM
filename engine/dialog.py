@@ -5,28 +5,24 @@ from . import bind
 
 @meta.apply
 class Dialog(GObject):
-    __attributes__ = ()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    persistent = True
 
     @sighandler
     def action(self, game, player):
-        player.dialogs.remove(self)
+        pass
+
+@meta.apply
+class Action(Dialog):
+    __attributes__ = ('callback',)
+    persistent = False
+
+    @sighandler
+    def action(self, game, player):
+        self.callback(game, player)
 
 @meta.apply
 class Message(Dialog):
-    __attributes__ = ('msg', 'signal')
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault('signal', None)
-        super().__init__(**kwargs)
-
-    @sighandler
-    def action(self, game, player):
-        super().action(game, player)
-        if self.signal:
-            self.send(self.signal, player)
+    __attributes__ = ('msg',)
 
 @meta.apply
 class Choice(Dialog):

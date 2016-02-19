@@ -58,7 +58,7 @@ class Callback:
 
     def call(self, cargs):
         f = self.eval(self.f, cargs)
-        args = (self.eval(arg, cargs) for arg in self.args)
+        args = tuple(self.eval(arg, cargs) for arg in self.args)
         kwargs = {self.eval(k, cargs): self.eval(v, cargs) for (k, v) in self.kwargs.items()}
         return f(*args, **kwargs)
 
@@ -86,7 +86,7 @@ class SugarBind(ArgBind):
     def __getstate__(self):
         return {}
     def __setstate__(self, state):
-        pass
+        self.n = None
     def __getattr__(self, name):
         return NamedBind(name)
     def __getitem__(self, name):

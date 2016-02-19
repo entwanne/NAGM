@@ -15,8 +15,8 @@ class Player(Trainer):
         super().__init__(**kwargs)
 
     def action(self):
-        if self.dialog:
-            self.send(self.dialog.action)
+        if self.dialogs:
+            self.pop_dialogs(True)
         elif self.battle:
             self.send(self.battle.action)
         else:
@@ -42,6 +42,12 @@ class Player(Trainer):
 
     def add_dialog(self, dialog):
         self.dialogs.append(dialog)
+        self.pop_dialogs()
+
+    def pop_dialogs(self, actioned=False):
+        while self.dialogs and (actioned or not self.dialogs[0].persistent):
+            actioned = False
+            self.send(self.dialogs.pop(0).action)
 
     @sighandler
     def actioned(self, game, player, map, pos):

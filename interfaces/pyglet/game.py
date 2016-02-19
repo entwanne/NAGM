@@ -47,7 +47,7 @@ class _:
             pyglet.gl.glTranslatef(dx, dy, 0)
             p.map.batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)
-        if p.dialog:
+        if p.dialog and hasattr(p.dialog, 'batch'):
             p.dialog.batch.draw()
 
     def __update(self, _dt):
