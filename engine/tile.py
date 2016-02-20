@@ -103,12 +103,11 @@ class Water(Tile):
     "Water"
     traversable = False
     ground = Ground.WATER
-    msg = dialog.Message(msg="Wanna surfin'?")
-    choice = dialog.Choice(choices=('oui', 'non'), signals=(None, None))
+    dialogs = ("Wanna surfin?", ('oui', None, 'non', None))
 
     @sighandler
     def actioned(self, game, player, map, pos):
-        dialog.spawn(player, self.msg, self.choice)
+        dialog.spawn(player, *self.dialogs)
 
 @meta.apply
 class Over(Tile):
@@ -135,5 +134,5 @@ class over:
         self.tiles_cls = tiles_cls
 
     def __call__(self, **kwargs):
-        kwargs['tiles'] = tuple(cls() for cls in self.tiles_cls)
-        return Over(**kwargs)
+        tiles = tuple(cls() for cls in self.tiles_cls)
+        return Over(tiles=tiles, **kwargs)

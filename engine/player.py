@@ -13,6 +13,7 @@ class Player(Trainer):
     def __init__(self, **kwargs):
         kwargs.setdefault('dialogs', [])
         super().__init__(**kwargs)
+        self.choice = 0 # No, because of asynchrone with send()
 
     def action(self):
         if self.dialogs:
@@ -23,13 +24,9 @@ class Player(Trainer):
             self.send(self.map.action, self.map.walk_position(self.position, self.direction))
 
     def battle_step(self, battle, beast):
-        attacks = ((att.name, callback(battle.attack, beast, att))
-                   for att in beast.attacks)
-        choices, signals = zip(*attacks)
-        attacks = Choice(choices=choices, signals=signals)
-        self.add_dialog(Choice(
-            choices=('Attack', 'Fuite'),
-            signals=(callback(self.add_dialog, attacks), callback(battle.end))))
+        attacks = sum(((att.name, callback(battle.attack, beast, att)) for att in beast.attacks), ())
+        attacks_cb = callback(Choice.spawn, self, *attacks)
+        Choice.spawn(self, 'Attack', attacks_cb, 'Fuite', callback(battle.end))
 
     @property
     def moveable(self):
@@ -51,4 +48,4 @@ class Player(Trainer):
 
     @sighandler
     def actioned(self, game, player, map, pos):
-        player.add_dialog(Message(msg="Hello, I'm {}".format(self.name)))
+        Message.spawn(player, "Hello, I'm {}".format(self.name))

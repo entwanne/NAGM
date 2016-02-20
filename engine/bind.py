@@ -11,7 +11,7 @@ class Bind:
     Special argument of a callback
     Bound arguments will be evaluated when at callback calls
     """
-    def bind(self, args, kwargs):
+    def bind(self, cargs):
         pass
 
 class ArgBind(Bind):
@@ -38,6 +38,13 @@ class BindCall(Bind):
         self.callback = callback
     def bind(self, cargs):
         return self.callback.call(cargs)
+
+class LateBind(Bind):
+    "Bind to an object that can be changed before call"
+    def __init__(self, value=None):
+        self.value = value
+    def bind(self, cargs):
+        return self.value
 
 class Callback:
     "two-times calling of a function"
@@ -99,6 +106,6 @@ class SugarBind(ArgBind):
         if isinstance(f, int):
             return ArgBind(f)
         if isinstance(f, str):
-            return NamedBind(name)
+            return NamedBind(f)
         return BindCall(callback(f, *args, **kwargs))
 _ = SugarBind()

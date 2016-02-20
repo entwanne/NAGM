@@ -81,7 +81,7 @@ class _:
     def __key_press(self, key):
         p = self.ui_player
         if p.dialog and hasattr(p.dialog, 'handle_key'):
-            p.dialog.handle_key(key)
+            p.dialog.handle_key(p, key)
         if key == pyglet.window.key.SPACE:
             p.action()
         elif key == pyglet.window.key.S:

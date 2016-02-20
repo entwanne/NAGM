@@ -42,9 +42,14 @@ class Battle(GObject):
         kwargs.setdefault('turn', 0)
         kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
-        for trainer in self.trainers:
+
+    @classmethod
+    def spawn(cls, **kwargs):
+        battle = cls(**kwargs)
+        for trainer in battle.trainers:
             trainer.ghostify()
-            trainer.battle = self
+            trainer.battle = battle
+        return battle
 
     @classmethod
     def from_args(cls, *args):
@@ -54,7 +59,7 @@ class Battle(GObject):
             for obj in args
         )
         trainers, beasts = zip(*args)
-        return cls(trainers=trainers, beasts=beasts)
+        return cls.spawn(trainers=trainers, beasts=beasts)
 
     def attack(self, beast, att):
         print(beast.name, 'uses', att.name)
