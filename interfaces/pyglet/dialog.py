@@ -16,7 +16,18 @@ class _:
 
 @engine.meta.register('engine.dialog.Choice')
 class _:
+    currents = {}
+
+    @classmethod
+    def labels_hash(cls, labels):
+        labels = hash(tuple(labels))
+        return labels
+
     def __init__(self, **kwargs):
+        kwargs.setdefault(
+            'current',
+            self.currents.get(self.labels_hash(kwargs['labels']), 0)
+        )
         super().__init__(**kwargs)
         self.__batch = None
 
@@ -32,6 +43,7 @@ class _:
     def select(self, player, d):
         self.batch # compute
         self.current = (self.current + d) % self.__size
+        self.currents[self.labels_hash(self.labels)] = self.current
         self.__bullet.x = self.current * 100
 
     def handle_key(self, player, key):

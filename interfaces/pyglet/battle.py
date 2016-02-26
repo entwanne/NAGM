@@ -18,7 +18,6 @@ class _:
         self.__sprites = []
         self.__health_bars = []
         for i, beast in enumerate(self.beasts):
-            print(beast)
             if beast and beast.family.name in beasts_imgs:
                 self.__sprites.append(
                     pyglet.sprite.Sprite(
