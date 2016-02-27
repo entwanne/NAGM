@@ -22,19 +22,18 @@ def init_game():
     game.events.append(char1)
     #event.events.append(object.Object())
 
-    player = engine.player.Player(name='Red', position=(0, 2, 0), map=bourg)
-    player.beastiary = engine.beast.Beastiary()
-    from .beasts import carapuce
-    player.beast = engine.beast.Beast(family=carapuce, dfse=10)
-    game.players.append(player)
-    game.events.append(player)
+    from .beasts import carapuce, pikachu
+    add_player(game, 'Red', bourg, (0, 2, 0), carapuce)
+    add_player(game, 'Blue', bourg, (0, 2, 0), pikachu)
 
-    player = engine.player.Player(name='Blue', position=(0, 2, 0), map=bourg)
-    player.beastiary = engine.beast.Beastiary()
-    from .beasts import pikachu
-    player.beast = engine.beast.Beast(family=pikachu, dfse=10)
-    game.players.append(player)
-    game.events.append(player)
+    spawner = ActionEvent(
+        position=(0, 1, 0),
+        map=bourg,
+        action_callback=engine.bind.cb(
+            add_player, game, 'Green', bourg, (0, 2, 0), pikachu
+        )
+    )
+    game.events.append(spawner)
 
     group = engine.dialog.DialogGroupSpawner()
     timer = engine.event.Timer(

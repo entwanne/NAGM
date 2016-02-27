@@ -16,7 +16,7 @@ class Game(GObject):
     def run(self):
         while True:
             self.handle_signals()
-            self.step_events()
+            self.step()
             time.sleep(0.3)
 
     def handle_signals(self):

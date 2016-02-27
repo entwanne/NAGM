@@ -7,7 +7,8 @@ class Event(GObject):
 
     __attributes__ = ('position', 'map')
 
-    traversable = True
+    traversable = False
+
     def __init__(self, **kwargs):
         kwargs.setdefault('position', (0, 0, 0))
         kwargs.setdefault('map', None)
