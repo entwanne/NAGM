@@ -36,12 +36,11 @@ class Game(GObject):
 
     def step(self):
         # step active maps and events on these maps
-        for player in self.players:
-            if player.battle:
-                player.battle.step(self)
-        for event in self.events:
-            if (event.map is None or any(event.map == player.map for player in self.players)) and hasattr(event, 'step'):
-                event.step(self)
+        maps = set(player.map for player in self.players)
+        events = set(event for event in self.events if event.map is None or event.map in maps)
+        for obj in maps | events:
+            if hasattr(obj, 'step'):
+                obj.step(self)
 
     def save(self, filename):
         import pickle

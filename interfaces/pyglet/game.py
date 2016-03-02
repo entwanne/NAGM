@@ -38,12 +38,8 @@ class _:
     def __draw(self):
         p = self.ui_player
         self.__window.clear()
-        if p.battle:
-            p.battle.batch.draw()
-        elif p.map:
-            sprite = p.sprites[0]
-            dx = (self.__window.width - sprite.width) // 2 - sprite.x
-            dy = (self.__window.height - sprite.height) // 2 - sprite.y
+        if p.map:
+            dx, dy = p.map.get_translation(self.__window, p)
             pyglet.gl.glTranslatef(dx, dy, 0)
             p.map.batch.draw()
             pyglet.gl.glTranslatef(-dx, -dy, 0)

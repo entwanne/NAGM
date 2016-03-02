@@ -20,7 +20,7 @@ class _:
         if ret and self.sprites:
             for z, sprite in enumerate(self.sprites):
                 if self.z != old_z:
-                    sprite.group = self.map.event_groups[self.z+z]
+                    sprite.group = self.map.groups[self.z+z]
                 sprite.set_position(self.x*16, (self.y+self.z+z)*16)
         return ret
 
@@ -50,11 +50,11 @@ class _:
                 pyglet.sprite.Sprite(
                     players_texgrid[0, self.__sprite_offset],
                     x=self.x*16, y=(self.y+self.z)*16,
-                    batch=map.batch, group=map.event_groups[self.z]),
+                    batch=map.batch, group=map.groups[self.z]),
                 pyglet.sprite.Sprite(
                     players_texgrid[1, self.__sprite_offset],
                     x=self.x*16, y=(self.y+self.z+1)*16,
-                    batch=map.batch, group=map.event_groups[self.z+1]),
+                    batch=map.batch, group=map.groups[self.z + 1]),
             )
         self.__sprites_map = map
         return self.__sprites

@@ -5,7 +5,38 @@ from . import meta
 from .signals import sighandler
 
 @meta.apply
-class Map(GObject):
+class BaseMap(GObject):
+    "A map is an object where events can be placed"
+
+    def get_events(self, pos):
+        for e in event.events:
+            if e.map == self and e.position == pos:
+                yield e
+
+    def walk_position(self, pos, dir):
+        x, y, z = pos
+        dx, dy = dir
+        return (x + dx, y + dy, z)
+
+    def can_move(self, pos):
+        return True
+
+    @sighandler
+    def moved(self, game, char, old_map, old_pos, pos):
+        if isinstance(char, Player):
+            for event in self.get_events(pos):
+                if hasattr(event, 'crossed'):
+                    event.crossed(game, char, old_map, old_pos, self, pos)
+
+    @sighandler
+    def action(self, game, player, pos):
+        for event in self.get_events(pos):
+            if hasattr(event, 'actioned'):
+                event.actioned(game, player, self, pos)
+
+@meta.apply
+class Map(BaseMap):
+    "Tiled map"
     __attributes__ = ('width', 'height', 'levels', 'tiles', 'zones')
 
     def __init__(self, **kwargs):
@@ -26,7 +57,7 @@ class Map(GObject):
 
     def has_tile(self, pos):
         x, y, z = pos
-        return (0 <= x < self.width and 0 <= y < self.height and 0 <= z < len(self.tiles))
+        return (0 <= x < self.width and 0 <= y < self.height and 0 <= z < self.levels)
 
     def get_tile(self, pos):
         if not self.has_tile(pos):
@@ -35,15 +66,10 @@ class Map(GObject):
         return self.tiles[z][y][x]
 
     def get_events(self, pos):
-        for e in event.events:
-            if e.map == self and e.position == pos:
-                yield e
-
-    def on_case(self, pos):
         tile = self.get_tile(pos)
         if tile:
             yield tile
-        yield from self.get_events(pos)
+        yield from super().get_events(pos)
 
     def walk_position(self, pos, dir):
         x, y, z = pos
@@ -59,7 +85,7 @@ class Map(GObject):
             return False
         traversable = self.traversables.get(pos)
         if traversable is None:
-            for obj in self.on_case(pos):
+            for obj in self.get_events(pos):
                 traversable = obj.traversable
             self.traversables[pos] = traversable
         return traversable
@@ -68,13 +94,4 @@ class Map(GObject):
     def moved(self, game, char, old_map, old_pos, pos):
         old_map.traversables[old_pos] = None
         self.traversables[pos] = None
-        if isinstance(char, Player):
-            for event in self.on_case(pos):
-                if hasattr(event, 'crossed'):
-                    event.crossed(game, char, old_map, old_pos, self, pos)
-
-    @sighandler
-    def action(self, game, player, pos):
-        for event in self.on_case(pos):
-            if hasattr(event, 'actioned'):
-                event.actioned(game, player, self, pos)
+        super().moved(game, char, old_map, old_pos, pos)

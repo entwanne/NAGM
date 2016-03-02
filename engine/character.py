@@ -79,18 +79,12 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
-    __attributes__ = ('battle',)
-    __attributes__ += ('beast',) # to delete
+    __attributes__ = ('beast',) # to delete
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('battle', None)
         kwargs.setdefault('beast', None) # to delete
         super().__init__(**kwargs)
 
-    @property
-    def moveable(self):
-        return super().moveable and self.battle is None
-
-    def battle_step(self, battle, beast):
+    def battle_step(self, use, beast):
         att = random.choice(beast.attacks)
-        self.send(battle.action, att, beast)
+        self.send(use, att, beast)

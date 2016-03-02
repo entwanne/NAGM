@@ -18,15 +18,13 @@ class Player(Trainer):
     def action(self):
         if self.dialogs:
             self.pop_dialogs(True)
-        elif self.battle:
-            self.send(self.battle.action)
         elif self.map:
             self.send(self.map.action, self.map.walk_position(self.position, self.direction))
 
-    def battle_step(self, battle, beast):
-        attacks = sum(((att.name, callback(self.send, battle.action, att, beast)) for att in beast.attacks), ())
+    def battle_step(self, use, beast):
+        attacks = sum(((att.name, callback(self.send, use, att, beast)) for att in beast.attacks), ())
         attacks_cb = callback(Choice.spawn, self, *attacks)
-        Choice.spawn(self, 'Attack', attacks_cb, 'Fuite', callback(self.send, battle.action, None, beast))
+        Choice.spawn(self, 'Attack', attacks_cb, 'Fuite', callback(self.send, use, None, beast))
 
     @property
     def moveable(self):

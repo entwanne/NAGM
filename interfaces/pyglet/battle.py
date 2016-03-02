@@ -5,8 +5,8 @@ from engine.signals import sighandler
 from .beast import textures as beasts_imgs
 
 def get_bar(x, y, k=1.):
-    width = int(100 * k)
-    vertices = (x, y, x, y + 10, x + width, y + 10, x + width, y)
+    width = int(80 * k)
+    vertices = (x, y, x, y + 8, x + width, y + 8, x + width, y)
     colors = (int(255 * (1 - k)), int(255 * k), 0, 0) * 4
     return vertices, colors
 
@@ -14,7 +14,6 @@ def get_bar(x, y, k=1.):
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.batch = pyglet.graphics.Batch()
         self.__sprites = []
         self.__health_bars = []
         for i, beast in enumerate(self.beasts):
@@ -22,10 +21,10 @@ class _:
                 self.__sprites.append(
                     pyglet.sprite.Sprite(
                         beasts_imgs[beast.family.name],
-                        x=100*i, y=100*i,
+                        x=16*(7*i+2), y=16*(7*i+2),
                         batch=self.batch)
                 )
-            vertices, colors = get_bar(100*i, 100*i, beast.hp / beast.max_hp)
+            vertices, colors = get_bar(16*(7*i+2), 16*(7*i+2)+4, beast.hp / beast.max_hp)
             self.__health_bars.append(
                 self.batch.add(4,
                                pyglet.gl.GL_QUADS,
@@ -42,3 +41,6 @@ class _:
                 continue
             x, y, *_ = bar.vertices
             bar.vertices, bar.colors = get_bar(x, y, beast.hp / beast.max_hp)
+
+    def get_translation(self, window, player):
+        return 0, 0

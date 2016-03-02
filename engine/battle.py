@@ -2,6 +2,7 @@ from .gobject import GObject
 from .character import Trainer
 from . import meta
 from .signals import sighandler
+from .map import BaseMap
 
 """
 IDÉES
@@ -38,7 +39,7 @@ class FakeTrainer(Trainer):
     pass
 
 @meta.apply
-class Battle(GObject):
+class Battle(BaseMap):
     "Battle between trainers"
 
     __attributes__ = ('trainers', 'beasts', 'trainer_actions', 'waiting')
@@ -51,9 +52,10 @@ class Battle(GObject):
     @classmethod
     def spawn(cls, **kwargs):
         battle = cls(**kwargs)
-        for trainer in battle.trainers:
+        for i, trainer in enumerate(battle.trainers):
             trainer.ghostify()
-            trainer.battle = battle
+            trainer.move(7 * i + 8, 7 * i + 2, 0, battle)
+            trainer.turn(0, -1)
         return battle
 
     @classmethod
@@ -94,8 +96,8 @@ class Battle(GObject):
             self.trainer_actions = {}
             self.waiting = True
             for trainer, beast in zip(self.trainers, self.beasts):
-                trainer.battle_step(self, beast)
+                trainer.battle_step(self.use, beast)
 
     @sighandler
-    def action(self, game, trainer, action, beast):
+    def use(self, game, trainer, action, beast):
         self.trainer_actions[trainer] = action, beast
