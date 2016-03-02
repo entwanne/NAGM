@@ -11,6 +11,8 @@ class _:
     def batch(self):
         if self.__batch is None:
             self.__batch = pyglet.graphics.Batch()
+            bg_img = pyglet.image.Texture.create(200, 30)
+            #self.__sprite = pyglet.text.Sprite(bg_img, x=0, y=0, batch=self.__batch)
             self.__label = pyglet.text.Label(self.msg, batch=self.__batch)
         return self.__batch
 

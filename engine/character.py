@@ -93,4 +93,4 @@ class Trainer(Character):
 
     def battle_step(self, battle, beast):
         att = random.choice(beast.attacks)
-        self.send(battle.attack, beast, att)
+        self.send(battle.action, att, beast)

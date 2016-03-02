@@ -26,6 +26,11 @@ Dans un premier temps, ne pas implémenter les déplacements en combat ni les ob
   - utiliser un autre event (ghost) pour mettre à la place ?
   - méthodes pour créer un ghost et pour reprendre sa place
   - les ghosts sont de simple events (n'intéragissent pas, ne se déplacent pas) non traversables
+
+Revoir fonctionnement actuel : les deux joueurs doivent décider de leurs actions (attaque, objet) en même temps
+Les actions sont exécutées ensuite.
+Méthode `use` de l'attaque/objet pour l'utilisation en combat ?
+`use(battle, trainer, beast, target)`
 """
 
 @meta.apply
@@ -36,10 +41,10 @@ class FakeTrainer(Trainer):
 class Battle(GObject):
     "Battle between trainers"
 
-    __attributes__ = ('trainers', 'beasts', 'turn', 'waiting')
+    __attributes__ = ('trainers', 'beasts', 'trainer_actions', 'waiting')
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('turn', 0)
+        kwargs.setdefault('trainer_actions', {})
         kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
 
@@ -73,17 +78,24 @@ class Battle(GObject):
             trainer.pop_ghost()
 
     def step(self, game):
+        if len(self.trainer_actions) == len(self.trainers):
+            for action, beast in self.trainer_actions.values():
+                if action is None:
+                    self.end()
+                    return
+                else:
+                    self.attack(beast, action)
+            self.waiting = False
+            self.trainer_actions = {}
         if any(beast.ko for beast in self.beasts if beast):
             self.end()
             return
         if not self.waiting:
+            self.trainer_actions = {}
             self.waiting = True
-            self.trainers[self.turn].battle_step(
-                self,
-                self.beasts[self.turn],
-            )
-            self.turn = (self.turn + 1) % len(self.trainers)
+            for trainer, beast in zip(self.trainers, self.beasts):
+                trainer.battle_step(self, beast)
 
     @sighandler
-    def action(self, game, player):
-        pass
+    def action(self, game, trainer, action, beast):
+        self.trainer_actions[trainer] = action, beast
