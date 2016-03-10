@@ -82,16 +82,17 @@ class Stairs(Tile):
     __attributes__ = ('directions',)
     traversable = True
 
-# deprecated
 @meta.apply
 class Hole(Tile):
     "Hole"
+
     traversable = True
+
     @sighandler
     def crossed(self, game, player, old_map, old_pos, map, pos):
-        x, y, z = pos
-        player.move(x, y, z - 1)
+        self.send(player.fall)
 
+# deprecated
 @meta.apply
 class Edge(Tile):
     "Edge"

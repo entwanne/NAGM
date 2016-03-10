@@ -20,13 +20,14 @@ class Ghost(Event):
 class Character(Event):
     "All characters (can move)"
 
-    __attributes__ = ('direction', 'ghost')
+    __attributes__ = ('direction', 'ghost', 'falling')
 
     traversable = False
 
     def __init__(self, **kwargs):
         kwargs.setdefault('direction', (0, -1))
         kwargs.setdefault('ghost', None)
+        kwargs.setdefault('falling', False)
         super().__init__(**kwargs)
 
     def move(self, x, y, z=None, map=None):
@@ -43,6 +44,7 @@ class Character(Event):
         old = self.position
         self.map = map
         self.position = pos
+        self.falling = False
         self.send(self.map.moved, oldmap, old, pos)
         return True
 
@@ -56,6 +58,19 @@ class Character(Event):
         if not self.map:
             return False
         return self.move(*self.map.walk_position(self.position, self.direction))
+
+    def fall(self):
+        if self.falling:
+            return
+        self.falling = True
+        self._fall()
+
+    def _fall(self):
+        if not self.falling:
+            return
+        x, y, z = self.position
+        if not self.move(x, y, z - 1):
+            self.send(self._fall)
 
     @property
     def moveable(self):

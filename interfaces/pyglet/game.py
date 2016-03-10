@@ -51,7 +51,6 @@ class _:
             if self.__signals_clock.finished:
                 self.handle_signals()
                 self.__signals_clock.reset()
-            return
         if self.__events_clock.finished:
             self.step()
             self.__events_clock.reset()
