@@ -38,6 +38,10 @@ class _:
             self.__calc_sprites_offset()
         return ret
 
+    def pop_ghost(self):
+        super().pop_ghost()
+        self.__calc_sprites_offset()
+
     @property
     def sprites(self):
         if self.map is self.__sprites_map:
