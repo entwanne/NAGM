@@ -59,7 +59,10 @@ class Choice(Dialog):
 
     @classmethod
     def spawn(cls, player, *choices, **kwargs):
-        labels, callbacks = choices[::2], choices[1::2]
+        if isinstance(choices[0], str): # 'label1', cb1, 'label2', cb2, ...
+            labels, callbacks = choices[::2], choices[1::2]
+        else: # ('label1', cb1), ('label2', cb2), ...
+            labels, callbacks = zip(*choices)
         return super().spawn(player, labels=labels, callbacks=callbacks, **kwargs)
 
     @sighandler

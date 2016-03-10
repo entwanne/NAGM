@@ -22,9 +22,9 @@ class Player(Trainer):
             self.send(self.map.action, self.map.walk_position(self.position, self.direction))
 
     def battle_step(self, use, beast):
-        attacks = sum(((att.name, callback(self.send, use, att, beast)) for att in beast.attacks), ())
+        attacks = ((att.name, callback(self.send, use, att, beast)) for att in beast.attacks)
         attacks_cb = callback(Choice.spawn, self, *attacks)
-        beasts = sum(((b.name, callback(self.send, use, b, beast)) for b in self.beasts), ())
+        beasts = ((b.name, callback(self.send, use, b, beast)) for b in self.beasts)
         beasts_cb = callback(Choice.spawn, self, *beasts)
         Choice.spawn(self, 'Attack', attacks_cb, 'Beasts', beasts_cb, 'Fuite', callback(self.send, use, None, beast))
 
