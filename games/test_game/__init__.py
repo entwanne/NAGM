@@ -23,7 +23,7 @@ def init_game():
     #event.events.append(object.Object())
 
     from .beasts import carapuce, pikachu
-    add_player(game, 'Red', bourg, (0, 2, 0), carapuce)
+    add_player(game, 'Red', bourg, (0, 2, 0), carapuce, pikachu)
     add_player(game, 'Blue', bourg, (0, 2, 0), pikachu)
 
     spawner = ActionEvent(

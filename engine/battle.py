@@ -45,6 +45,8 @@ class Battle(BaseMap):
     __attributes__ = ('trainers', 'beasts', 'trainer_actions', 'waiting')
 
     def __init__(self, **kwargs):
+        kwargs['trainers'] = list(kwargs['trainers'])
+        kwargs['beasts'] = list(kwargs['beasts'])
         kwargs.setdefault('trainer_actions', {})
         kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
@@ -61,8 +63,8 @@ class Battle(BaseMap):
     @classmethod
     def from_args(cls, *args):
         args = (
-            (obj, obj.beast) if isinstance(obj, Trainer)
-            else (FakeTrainer(beast=obj), obj)
+            (obj, obj.beasts[0]) if isinstance(obj, Trainer)
+            else (FakeTrainer(beasts=[obj]), obj)
             for obj in args
         )
         trainers, beasts = zip(*args)
@@ -72,7 +74,9 @@ class Battle(BaseMap):
         print(beast.name, 'uses', att.name)
         i = self.beasts.index(beast)
         beast.attack(att, self.beasts[not i])
-        self.waiting = False
+
+    def change(self, old_beast, new_beast):
+        self.beasts[self.beasts.index(old_beast)] = new_beast
 
     def end(self):
         for trainer in self.trainers:
@@ -85,6 +89,8 @@ class Battle(BaseMap):
                 if action is None:
                     self.end()
                     return
+                elif isinstance(action, type(beast)):
+                    self.change(beast, action)
                 else:
                     self.attack(beast, action)
             self.waiting = False
