@@ -36,11 +36,13 @@ class HighGrass(Tile):
     "High grass (battles)"
 
     __attributes__ = ('zone',)
-
     traversable = True
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.zone.area += 1
+
+    @classmethod
+    def spawn(cls, **kwargs):
+        tile = cls(**kwargs)
+        tile.zone.area += 1
+        return tile
 
     @sighandler
     def crossed(self, game, player, old_map, old_pos, map, pos):

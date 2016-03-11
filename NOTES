@@ -19,4 +19,5 @@ Une bordure en (3,2,0.5) sera affichée en (3,3), ce qui explique qu'en arrivant
 Règles générales:
 
 - Instancier une classe ne change jamais le comportement du jeu (il faut pour cela la régler comme attribut d'un autre objet du jeu, ou l'ajouter à game.events, ou émettre un signal depuis cette classe, etc.) -> les classes de base, ne concerne pas les classes d'interface
+- Surtout, un autre GObject ne devrait pas être exploré depuis le constructeur d'un objet -> utiliser des méthodes `spawn` ou `from_...` quand objets à modifier/explorer + méthode `refresh` pour les objets pyglet
 - Jamais 2 actions à la fois (utiliser signaux pour programmer la prochaine action)

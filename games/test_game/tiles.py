@@ -9,7 +9,7 @@ def stairs_directions(y):
 
 tile_chars = {
     '.': engine.tile.Grass,
-    '*': lambda: engine.tile.HighGrass(zone=zone),
+    '*': lambda: engine.tile.HighGrass.spawn(zone=zone),
     '|': engine.tile.Tree,
     'x': engine.tile.Rock,
     '=': lambda: engine.tile.Stairs(directions=stairs_directions(1)),

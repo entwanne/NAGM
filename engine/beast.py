@@ -23,15 +23,16 @@ class Beast(Character):
 
     __attributes__ = ('family', 'name', 'max_hp', 'hp', 'att', 'dfse', 'attacks')
 
-    def __init__(self, **kwargs):
-        f = kwargs['family']
-        kwargs.setdefault('name', f.name)
-        kwargs.setdefault('max_hp', f.hp)
-        kwargs.setdefault('hp', f.hp)
-        kwargs.setdefault('att', f.att)
-        kwargs.setdefault('dfse', f.dfse)
-        kwargs.setdefault('attacks', list(f.attacks))
-        super().__init__(**kwargs)
+    @classmethod
+    def from_family(cls, family, **kwargs):
+        kwargs['family'] = family
+        kwargs.setdefault('name', family.name)
+        kwargs.setdefault('max_hp', family.hp)
+        kwargs.setdefault('hp', family.hp)
+        kwargs.setdefault('att', family.att)
+        kwargs.setdefault('dfse', family.dfse)
+        kwargs.setdefault('attacks', list(family.attacks))
+        return cls(**kwargs)
 
     @property
     def ko(self):

@@ -22,22 +22,22 @@ import random, itertools, bisect
 class Zone(GObject):
     "Beast zones (where battle can be thrown)"
 
-    __attributes__ = ('type', 'groups')
+    __attributes__ = ('type', 'groups', 'area')
 
     def __init__(self, **kwargs):
         #self.type = type # grass, water, etc.
         #self.groups = groups # wild groups
+        kwargs.setdefault('area', 0)
         super().__init__(**kwargs)
-        self.area = 0
 
     def random_beast(self):
         weights_acc = list(itertools.accumulate(group.population for group in self.groups))
         x = random.random() * weights_acc[-1]
         family = self.groups[bisect.bisect(weights_acc, x)].family
-        return Beast(family=family)
+        return Beast.from_family(family)
 
     def maybe_beast(self):
-        density = sum(group.population for group in self.groups) / self.area
+        density = sum(group.population for group in self.groups) / self.area if self.area else 0
         if random.random() > density:
             return
         return self.random_beast()
