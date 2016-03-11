@@ -36,7 +36,11 @@ Méthode `use` de l'attaque/objet pour l'utilisation en combat ?
 
 @meta.apply
 class FakeTrainer(Trainer):
-    pass
+    def ghostify(self):
+        pass
+
+    def pop_ghost(self):
+        pass
 
 @meta.apply
 class Battle(BaseMap):

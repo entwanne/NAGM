@@ -88,6 +88,7 @@ class Character(Event):
             return
         ghost, self.ghost = self.ghost, None
         self.map, self.position, self.direction = ghost.map, ghost.position, ghost.direction
+        ghost.map = None
         event.events.remove(ghost)
 
 @meta.apply

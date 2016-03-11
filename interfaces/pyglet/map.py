@@ -18,8 +18,7 @@ class _:
 
 @engine.meta.register('engine.map.Map')
 class _:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def refresh_ui(self):
         for z, level in enumerate(self.tiles):
             for y, line in enumerate(level):
                 for x, tile in enumerate(line):

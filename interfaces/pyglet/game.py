@@ -36,6 +36,10 @@ class _:
         return self.__ui_player
 
     def __draw(self):
+        if engine.gobject.GObject.to_refresh:
+            to_refresh, engine.gobject.GObject.to_refresh = engine.gobject.GObject.to_refresh, []
+            for obj in to_refresh:
+                obj.refresh_ui()
         p = self.ui_player
         self.__window.clear()
         if p.map:

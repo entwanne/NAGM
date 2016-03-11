@@ -12,8 +12,7 @@ def get_bar(x, y, k=1.):
 
 @engine.meta.register('engine.battle.Battle')
 class _:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def refresh_ui(self):
         self.__sprites = []
         self.__health_bars = []
         for i, beast in enumerate(self.beasts):
