@@ -24,6 +24,14 @@ def init_game():
         ),
     )
     game.events.append(char1)
+    char2 = defs.BourgChar(
+        position=(9,0,0),
+        map=road,
+        dialogs=(
+            'Hug',
+        ),
+    )
+    game.events.append(char2)
     #event.events.append(object.Object())
 
     from .beasts import carapuce, pikachu

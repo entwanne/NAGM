@@ -1,6 +1,11 @@
 from nagm import engine
 from .beasts import *
 
-pikagroup = engine.zone.WildGroup(family=pikachu, population=5) # group of 10 pikachus
-caragroup = engine.zone.WildGroup(family=carapuce, population=2) # group of 4 carapuces
-zone = engine.zone.Zone(type='grass', groups=[pikagroup, caragroup])
+groups = (
+    engine.zone.WildGroup(family=bulbizarre, population=1),
+    engine.zone.WildGroup(family=salameche, population=1),
+    engine.zone.WildGroup(family=carapuce, population=1),
+    engine.zone.WildGroup(family=rattata, population=3),
+    engine.zone.WildGroup(family=pikachu, population=1),
+)
+zone = engine.zone.Zone(type='grass', groups=groups)
