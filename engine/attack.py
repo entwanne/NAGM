@@ -7,5 +7,3 @@ class Attack(GObject):
 
     def use(self, sender, receiver):
         receiver.damages(self.damages * sender.att / receiver.dfse)
-
-lutte = Attack(name='lutte', damages=10)

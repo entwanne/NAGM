@@ -2,7 +2,6 @@ from .gobject import GObject
 from .character import Character
 from .object import Object
 from . import meta
-from .attack import lutte
 
 @meta.apply
 class BeastFamily(GObject):
@@ -11,7 +10,8 @@ class BeastFamily(GObject):
     __attributes__ = ('id', 'name', 'type', 'hp', 'att', 'dfse', 'attacks')
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('attacks', (lutte,))
+        if not kwargs['attacks']:
+            raise ValueError('BeastFamily should be initialized with at least one attack')
         kwargs.setdefault('hp', 50)
         kwargs.setdefault('att', 1)
         kwargs.setdefault('dfse', 1)
