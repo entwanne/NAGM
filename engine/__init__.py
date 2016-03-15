@@ -1,8 +1,7 @@
 __all__ = [
-    'meta', 'clock',
+    'meta', 'resources', 'signals', 'bind', 'clock', # can be loaded before interface
     'game', 'event', 'beast', 'character', 'object', 'zone',
-    'map', 'tile', 'player', 'battle', 'dialog', 'signals', 'bind',
-    'mixins',
+    'map', 'tile', 'player', 'battle', 'dialog', 'mixins',
 ]
 
 def load_modules():

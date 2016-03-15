@@ -2,15 +2,12 @@ DEBUG = True
 INTERFACE = 'nagm.interfaces.pyglet'
 GAME = 'nagm.games.test_game'
 
-
 from importlib import import_module
 
+game_mod = import_module(GAME)
 import_module(INTERFACE)
 from . import engine
 engine.load_modules()
-
-game_mod = import_module(GAME)
-
 
 import os.path
 
