@@ -1,5 +1,5 @@
-import engine.meta
+from nagm.engine.meta import register as metareg
 
-@engine.meta.register('engine.event.Event')
+@metareg('nagm.engine.event.Event')
 class _:
     sprites = ()

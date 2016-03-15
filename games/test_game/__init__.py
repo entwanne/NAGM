@@ -1,5 +1,4 @@
-import engine
-
+from nagm import engine
 from .defs import *
 
 def init_game():

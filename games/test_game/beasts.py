@@ -1,4 +1,4 @@
-import engine
+from nagm import engine
 from .attacks import charge
 
 pikachu = engine.beast.BeastFamily(name='Pikachu', type='Electrik')

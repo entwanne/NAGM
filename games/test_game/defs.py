@@ -1,6 +1,4 @@
-import engine
-from engine.signals import sighandler
-from engine import bind
+from nagm import engine
 
 class BourgChar(engine.mixins.characters.Speaker, engine.mixins.characters.InfiniteWalker, engine.character.Character):
     pass

@@ -1,25 +1,26 @@
-import engine.meta
+from nagm.engine.meta import register as metareg
+from nagm import engine
 
 from .resources import grounds_texgrid, trees_texgrid, get_empty_tile
 
-@engine.meta.register('engine.tile.Tile')
+@metareg('nagm.engine.tile.Tile')
 class _:
     img = None
     def refresh(self, map, pos): pass
 
-@engine.meta.register('engine.tile.Grass')
+@metareg('nagm.engine.tile.Grass')
 class _:
     img = grounds_texgrid[49, 0]
 
-@engine.meta.register('engine.tile.HighGrass')
+@metareg('nagm.engine.tile.HighGrass')
 class _:
     img = grounds_texgrid[48, 3]
 
-@engine.meta.register('engine.tile.Teleport')
+@metareg('nagm.engine.tile.Teleport')
 class _:
     img = grounds_texgrid[48, 4]
 
-@engine.meta.register('engine.tile.Tree')
+@metareg('nagm.engine.tile.Tree')
 class _:
     __Y, __X = 47, 0
     __left = True
@@ -45,11 +46,11 @@ class _:
     def img(self):
         return trees_texgrid[self.__Y, self.__X]
 
-@engine.meta.register('engine.tile.Rock')
+@metareg('nagm.engine.tile.Rock')
 class _:
     img = grounds_texgrid[32, 1]
 
-@engine.meta.register('engine.tile.Stairs')
+@metareg('nagm.engine.tile.Stairs')
 class _:
     img = grounds_texgrid[49, 0]
     def refresh(self, map, pos):
@@ -57,7 +58,7 @@ class _:
         if (0, 1) in self.directions:
             self.img = grounds_texgrid[49, 7]
 
-@engine.meta.register('engine.tile.Water')
+@metareg('nagm.engine.tile.Water')
 class _:
     imgs = {
         # left, right, down, up
@@ -79,7 +80,7 @@ class _:
         if nexts in self.imgs:
             self.img = self.imgs[nexts]
 
-@engine.meta.register('engine.tile.Over')
+@metareg('nagm.engine.tile.Over')
 class _:
     def refresh(self, map, pos):
         for tile in self.tiles:

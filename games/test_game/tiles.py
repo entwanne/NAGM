@@ -1,4 +1,4 @@
-import engine
+from nagm import engine
 from .zones import zone
 
 #Edge = engine.tile.over(engine.tile.Grass, engine.tile.Edge)

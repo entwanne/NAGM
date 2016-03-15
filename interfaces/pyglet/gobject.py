@@ -1,6 +1,6 @@
-import engine.meta
+from nagm.engine.meta import register as metareg
 
-@engine.meta.register('engine.gobject.GObject')
+@metareg('nagm.engine.gobject.GObject')
 class _:
     to_refresh = []
 

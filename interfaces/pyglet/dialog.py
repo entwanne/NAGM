@@ -1,7 +1,7 @@
 import pyglet
-import engine.meta
+from nagm.engine.meta import register as metareg
 
-@engine.meta.register('engine.dialog.Message')
+@metareg('nagm.engine.dialog.Message')
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -16,7 +16,7 @@ class _:
             self.__label = pyglet.text.Label(self.msg, batch=self.__batch)
         return self.__batch
 
-@engine.meta.register('engine.dialog.Choice')
+@metareg('nagm.engine.dialog.Choice')
 class _:
     currents = {}
 

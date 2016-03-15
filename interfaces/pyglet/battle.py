@@ -1,6 +1,6 @@
 import pyglet
-import engine.meta
-from engine.signals import sighandler
+from nagm.engine.meta import register as metareg
+from nagm.engine.signals import sighandler
 
 from .beast import textures as beasts_imgs
 
@@ -10,7 +10,7 @@ def get_bar(x, y, k=1.):
     colors = (int(255 * (1 - k)), int(255 * k), 0, 0) * 4
     return vertices, colors
 
-@engine.meta.register('engine.battle.Battle')
+@metareg('nagm.engine.battle.Battle')
 class _:
     def refresh_ui(self):
         self.__sprites = []

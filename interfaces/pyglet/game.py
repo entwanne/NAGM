@@ -1,8 +1,8 @@
 import pyglet
-import engine.meta
+from nagm.engine.meta import register as metareg
+from nagm import engine
 
-
-@engine.meta.register('engine.game.Game')
+@metareg('nagm.engine.game.Game')
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -19,7 +19,7 @@ class _:
         self.__keys = pyglet.window.key.KeyStateHandler()
         self.__window.push_handlers(self.__keys)
 
-        from engine.clock import Clock
+        from nagm.engine.clock import Clock
         tick = 0.3
         tick = 0.
         self.__signals_clock = Clock(tick)

@@ -1,5 +1,5 @@
 import pyglet
-import engine.meta
+from nagm.engine.meta import register as metareg
 
 class GroupsDict(dict):
     "Dynamically add groups"
@@ -8,7 +8,7 @@ class GroupsDict(dict):
         self[key] = group
         return group
 
-@engine.meta.register('engine.map.BaseMap')
+@metareg('nagm.engine.map.BaseMap')
 class _:
     groups = GroupsDict()
 
@@ -16,7 +16,7 @@ class _:
         super().__init__(**kwargs)
         self.batch = pyglet.graphics.Batch()
 
-@engine.meta.register('engine.map.Map')
+@metareg('nagm.engine.map.Map')
 class _:
     def refresh_ui(self):
         for z, level in enumerate(self.tiles):

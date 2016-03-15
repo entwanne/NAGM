@@ -1,10 +1,10 @@
 import pyglet
-import engine.meta
+from nagm.engine.meta import register as metareg
 
 from .resources import players_texgrid
 
-@engine.meta.register('engine.character.Ghost')
-@engine.meta.register('engine.character.Character')
+@metareg('nagm.engine.character.Ghost')
+@metareg('nagm.engine.character.Character')
 class _:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
