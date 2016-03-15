@@ -1,12 +1,9 @@
 import pyglet
+from nagm.engine.meta import register as metareg
 import nagm.engine.resources as res
 
-from collections import defaultdict
-
-textures = defaultdict(
-    lambda: pyglet.image.Texture.create(16, 16),
-    {
-        'Pikachu': pyglet.image.load(res.get('025.png')),
-        'Carapuce': pyglet.image.load(res.get('007.png')),
-    }
-)
+@metareg('nagm.engine.beast.BeastFamily')
+class _:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.pyglet_img = pyglet.image.load(res.get('beasts/{}.png'.format(self.id)))

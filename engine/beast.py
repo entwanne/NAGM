@@ -8,7 +8,7 @@ from .attack import lutte
 class BeastFamily(GObject):
     "Family of a beast: name, type, attacks, etc."
 
-    __attributes__ = ('name', 'type', 'hp', 'att', 'dfse', 'attacks')
+    __attributes__ = ('id', 'name', 'type', 'hp', 'att', 'dfse', 'attacks')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('attacks', (lutte,))

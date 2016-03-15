@@ -2,8 +2,6 @@ import pyglet
 from nagm.engine.meta import register as metareg
 from nagm.engine.signals import sighandler
 
-from .beast import textures as beasts_imgs
-
 def get_bar(x, y, k=1.):
     width = int(80 * k)
     vertices = (x, y, x, y + 8, x + width, y + 8, x + width, y)
@@ -18,7 +16,7 @@ class _:
         for i, beast in enumerate(self.beasts):
             self.__sprites.append(
                 pyglet.sprite.Sprite(
-                    beasts_imgs[beast.family.name],
+                    beast.family.pyglet_img,
                     x=16*(7*i+2), y=16*(7*i+2),
                     batch=self.batch)
             )
@@ -41,7 +39,8 @@ class _:
     def change(self, *args, **kwargs):
         super().change(*args, **kwargs)
         for beast, sprite in zip(self.beasts, self.__sprites):
-            sprite.image = beasts_imgs[beast.family.name]
+            sprite.image = beast.family.pyglet_img
 
     def get_translation(self, window, player):
         return 0, 0
+
