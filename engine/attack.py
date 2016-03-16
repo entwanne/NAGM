@@ -3,7 +3,9 @@ from . import meta
 
 @meta.apply
 class Attack(GObject):
-    __attributes__ = ('name', 'damages',)
+    __attributes__ = ('name', 'type', 'damages',)
 
     def use(self, sender, receiver):
-        receiver.damages(self.damages * sender.att / receiver.dfse)
+        dam = self.damages * sender.att / receiver.dfse
+        dam *= self.type.over(receiver.type)
+        receiver.damages(dam)

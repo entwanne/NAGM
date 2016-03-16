@@ -74,10 +74,17 @@ class Battle(BaseMap):
         trainers, beasts = zip(*args)
         return cls.spawn(trainers=trainers, beasts=beasts)
 
-    def attack(self, beast, att):
-        print(beast.name, 'uses', att.name)
-        i = self.beasts.index(beast)
-        beast.attack(att, self.beasts[not i])
+    def attack(self, sbeast, att):
+        i = self.beasts.index(sbeast)
+        rbeast = self.beasts[not i]
+        msg = ''
+        tt = att.type.over(rbeast.type)
+        if tt < 1:
+            msg = '(less-effective)'
+        elif tt > 1:
+            msg = '(super-effective)'
+        print(sbeast.name, 'uses', att.name, msg)
+        sbeast.attack(att, rbeast)
 
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast

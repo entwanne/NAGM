@@ -35,6 +35,14 @@ class Beast(Character):
         return cls(**kwargs)
 
     @property
+    def id(self):
+        return self.family.id
+
+    @property
+    def type(self):
+        return self.family.type
+
+    @property
     def ko(self):
         return self.hp == 0
 
