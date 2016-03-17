@@ -2,7 +2,7 @@ __all__ = [
     'meta', 'resources', 'signals', 'bind', 'clock', # can be loaded before interface
     'game', 'gobject', 'map', 'battle', 'dialog', 'tile',
     'event', 'character', 'player', 'object',
-    'type', 'attack', 'beast', 'zone',
+    'type', 'attack', 'beast', 'stats', 'formula', 'zone',
     'mixins',
 ]
 

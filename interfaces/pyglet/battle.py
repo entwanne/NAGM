@@ -20,7 +20,7 @@ class _:
                     x=16*(7*i+2), y=16*(7*i+2),
                     batch=self.batch)
             )
-            vertices, colors = get_bar(16*(7*i+2), 16*(7*i+2)+4, beast.hp / beast.max_hp)
+            vertices, colors = get_bar(16*(7*i+2), 16*(7*i+2)+4, beast.stats.hp / beast.stats.hp.max)
             self.__health_bars.append(
                 self.batch.add(4,
                                pyglet.gl.GL_QUADS,
@@ -34,7 +34,7 @@ class _:
         super().attack(*args, **kwargs)
         for beast, bar in zip(self.beasts, self.__health_bars):
             x, y, *_ = bar.vertices
-            bar.vertices, bar.colors = get_bar(x, y, beast.hp / beast.max_hp)
+            bar.vertices, bar.colors = get_bar(x, y, beast.stats.hp / beast.stats.hp.max)
 
     def change(self, *args, **kwargs):
         super().change(*args, **kwargs)
@@ -43,4 +43,3 @@ class _:
 
     def get_translation(self, window, player):
         return 0, 0
-

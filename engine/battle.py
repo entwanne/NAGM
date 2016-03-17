@@ -77,14 +77,15 @@ class Battle(BaseMap):
     def attack(self, sbeast, att):
         i = self.beasts.index(sbeast)
         rbeast = self.beasts[not i]
-        msg = ''
-        tt = att.type.over(rbeast.type)
-        if tt < 1:
-            msg = '(less-effective)'
-        elif tt > 1:
-            msg = '(super-effective)'
-        print(sbeast.name, 'uses', att.name, msg)
-        sbeast.attack(att, rbeast)
+        seffects, reffects = sbeast.attack(att, rbeast)
+
+        sname = sbeast.name + (' (ennemy)' if i else '')
+        rname = rbeast.name + ('' if i else ' (ennemy)')
+        print('{} uses {}'.format(sname, att.name))
+        for stat, diff in seffects.items():
+            print('* {}.{}: {:+}'.format(sname, stat, diff))
+        for stat, diff in reffects.items():
+            print('* {}.{}: {:+}'.format(rname, stat, diff))
 
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast

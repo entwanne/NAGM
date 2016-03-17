@@ -1,36 +1,31 @@
 from .gobject import GObject
 from .character import Character
 from .object import Object
+from .stats import Stats
 from . import meta
 
 @meta.apply
 class BeastFamily(GObject):
     "Family of a beast: name, type, attacks, etc."
 
-    __attributes__ = ('id', 'name', 'type', 'hp', 'att', 'dfse', 'attacks')
+    __attributes__ = ('id', 'name', 'type', 'stats_ref', 'attacks')
 
     def __init__(self, **kwargs):
         if not kwargs['attacks']:
             raise ValueError('BeastFamily should be initialized with at least one attack')
-        kwargs.setdefault('hp', 50)
-        kwargs.setdefault('att', 1)
-        kwargs.setdefault('dfse', 1)
         super().__init__(**kwargs)
 
 @meta.apply
 class Beast(Character):
     "All beasts (can be moving on the map, in their balls, etc.)"
 
-    __attributes__ = ('family', 'name', 'max_hp', 'hp', 'att', 'dfse', 'attacks')
+    __attributes__ = ('family', 'name', 'stats', 'attacks')
 
     @classmethod
     def from_family(cls, family, **kwargs):
         kwargs['family'] = family
         kwargs.setdefault('name', family.name)
-        kwargs.setdefault('max_hp', family.hp)
-        kwargs.setdefault('hp', family.hp)
-        kwargs.setdefault('att', family.att)
-        kwargs.setdefault('dfse', family.dfse)
+        kwargs.setdefault('stats', family.stats_ref.stats())
         kwargs.setdefault('attacks', list(family.attacks))
         return cls(**kwargs)
 
@@ -44,13 +39,13 @@ class Beast(Character):
 
     @property
     def ko(self):
-        return self.hp == 0
+        return self.stats.hp == 0
 
     def attack(self, att, beast):
-        att.use(self, beast)
+        return att.use(self, beast)
 
-    def damages(self, hp):
-        self.hp = max(self.hp - hp, 0)
+    def apply_stats(self, stats):
+        self.stats.apply(stats)
 
 @meta.apply
 class Beastiary(Object):
