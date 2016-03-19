@@ -33,7 +33,6 @@ ops = {
     'round': (round, 'round({})', 1),
     'floor': (math.floor, 'math.floor({})', 1),
     'ceil': (math.ceil, 'math.ceil({})', 1),
-    'int': (int, 'int({})', 1),
     'float': (float, 'float({})', 1),
 
     'add': (operator.add, '({} + {})', 2),
@@ -127,3 +126,23 @@ class Cond(Formula):
 
     def __repr__(self):
         return '({} if {} else {})'.format(self.then, self.predicate, self.else_)
+
+class Min(Formula):
+    def __init__(self, *values):
+        self.values = values
+
+    def apply(self, ctx):
+        return min(apply(v, ctx) for v in self.values)
+
+    def __repr__(self):
+        return 'min({})'.format(', '.join(repr(v) for v in self.values))
+
+class Max(Formula):
+    def __init__(self, *values):
+        self.values = values
+
+    def apply(self, ctx):
+        return max(apply(v, ctx) for v in self.values)
+
+    def __repr__(self):
+        return 'max({})'.format(', '.join(repr(v) for v in self.values))

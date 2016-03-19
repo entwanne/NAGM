@@ -10,8 +10,12 @@ def add_player(game, name, map, position, *beasts_families):
     player = engine.player.Player(name=name, map=map, position=position)
     player.beastiary = engine.beast.Beastiary()
     player.beasts = [engine.beast.Beast.from_family(family) for family in beasts_families]
+    from .attacks import faux_chage, soin
     for beast in player.beasts:
-        beast.stats.dfse.max = 10
-        beast.stats.dfse.reset()
+        beast.stats.hp.max=1000
+        beast.stats.hp.reset()
+        beast.attacks.pop()
+        beast.attacks.append(faux_chage)
+        beast.attacks.append(soin)
     game.players.append(player)
     game.events.append(player)

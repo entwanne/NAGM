@@ -9,17 +9,20 @@ class Attack(GObject):
     def use(self, sender, receiver):
         tr = self.type.over(receiver.type)
         ctx = {'type_rapport': tr}
-        ctx.update({'s_{}'.format(attr): value for (attr, value) in sender.stats.values.items()})
-        ctx.update({'r_{}'.format(attr): value for (attr, value) in receiver.stats.values.items()})
+        for b, beast in (('s', sender), ('r', receiver)):
+            for stat, value in beast.stats.values.items():
+                ctx['{}_{}'.format(b, stat)] = value
+                for attr in value.__attributes__:
+                    ctx['{}_{}_{}'.format(b, stat, attr)] = getattr(value, attr)
 
         effects = {'r': {}, 's': {}}
         for attr, form in self.effects.items():
             key, stat = attr.split('_', 1) # 'r_hp' -> 'r', 'hp' 
-            diff = formula.strict_apply(form, ctx) # error if diff is not numeric
-            effects[key][stat] = diff
+            # error if value is not numeric
+            effects[key][stat] = formula.strict_apply(form, ctx)
 
         if effects['r']:
             receiver.apply_stats(effects['r'])
         if effects['s']:
             sender.apply_stats(effects['s'])
-        return effects['s'], effects['r']
+        return set(effects['s']), set(effects['r'])

@@ -82,10 +82,12 @@ class Battle(BaseMap):
         sname = sbeast.name + (' (ennemy)' if i else '')
         rname = rbeast.name + ('' if i else ' (ennemy)')
         print('{} uses {}'.format(sname, att.name))
-        for stat, diff in seffects.items():
-            print('* {}.{}: {:+}'.format(sname, stat, diff))
-        for stat, diff in reffects.items():
-            print('* {}.{}: {:+}'.format(rname, stat, diff))
+        for stat_name in seffects:
+            stat = getattr(sbeast.stats, stat_name)
+            print('* {}.{}: {}/{}'.format(sname, stat_name, stat, stat.default))
+        for stat_name in reffects:
+            stat = getattr(rbeast.stats, stat_name)
+            print('* {}.{}: {}/{}'.format(rname, stat_name, stat, stat.default))
 
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast

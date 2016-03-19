@@ -120,8 +120,9 @@ class BaseStats(GObject, metaclass=StatsMeta):
         return {attr: getattr(self, attr) for attr in self.__stat_helpers__}
 
     def apply(self, stats):
-        for key, diff in stats.items():
-            setattr(self, key, getattr(self, key) + diff)
+        for key, value in stats.items():
+            #setattr(self, key, getattr(self, key) + diff)
+            setattr(self, key, value)
 
 class Stats(BaseStats):
     hp = StatHelper('hp', MinMaxStat)
