@@ -4,9 +4,6 @@ from . import meta
 
 @meta.apply
 class GObject(metaclass=GObjectMeta):
-    # Attributes of the object
-    __attributes__ = ()
-
     def __init__(self, **kwargs):
         for key in self.__attributes__:
             setattr(self, key, kwargs.pop(key))

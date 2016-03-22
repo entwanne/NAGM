@@ -2,12 +2,10 @@ registered = {}
 
 class GObjectMeta(type):
     def __new__(cls, name, bases, dict):
-        attributes = ()
+        attributes = set(dict.pop('__attributes__', ()))
         for base in bases:
             if isinstance(base, cls):
-                attributes += base.__attributes__
-        if '__attributes__' in dict:
-            attributes += dict['__attributes__']
+                attributes.update(base.__attributes__)
         dict['__attributes__'] = attributes
         return super().__new__(cls, name, bases, dict)
 
