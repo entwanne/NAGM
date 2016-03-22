@@ -3,7 +3,7 @@ from nagm.engine.meta import register as metareg
 from nagm.engine.signals import sighandler
 
 def get_bar(x, y, k=1.):
-    width = int(80 * k)
+    width = int(100 * k)
     vertices = (x, y, x, y + 8, x + width, y + 8, x + width, y)
     colors = (int(255 * (1 - k)), int(255 * k), 0, 0) * 4
     return vertices, colors
@@ -20,7 +20,7 @@ class _:
                     x=16*(7*i+2), y=16*(7*i+2),
                     batch=self.batch)
             )
-            vertices, colors = get_bar(16*(7*i+2), 16*(7*i+2)+4, beast.stats.hp / beast.stats.hp.max)
+            vertices, colors = get_bar(16*(7*i+2), 16*(7*i+2)+4, beast.stats.hp_coef)
             self.__health_bars.append(
                 self.batch.add(4,
                                pyglet.gl.GL_QUADS,
@@ -34,7 +34,7 @@ class _:
         super().attack(*args, **kwargs)
         for beast, bar in zip(self.beasts, self.__health_bars):
             x, y, *_ = bar.vertices
-            bar.vertices, bar.colors = get_bar(x, y, beast.stats.hp / beast.stats.hp.max)
+            bar.vertices, bar.colors = get_bar(x, y, beast.stats.hp_coef)
 
     def change(self, *args, **kwargs):
         super().change(*args, **kwargs)

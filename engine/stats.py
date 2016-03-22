@@ -1,128 +1,100 @@
 from .gobject import GObject
+from . import meta
 from .meta import GObjectMeta
 
-class StatsRefs:
-    def __init__(self, cls, **kwargs):
-        self.cls = cls
-        self.values = kwargs
-
-    def stats(self):
-        return self.cls.from_values(**self.values)
-
-class Stat(GObject):
-    __attributes__ = ('value', 'default',)
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault('default', kwargs['value'])
-        super().__init__(**kwargs)
-
-    @classmethod
-    def from_value(cls, value, **kwargs):
-        return cls(value=value, **kwargs)
-
-    def set(self, value):
-        self.value = value
-
-    def reset(self):
-        self.value = self.default
-
-class MinMaxStat(Stat):
-    __attributes__ = ('min', 'max',)
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault('min', 0)
-        # if max is None, max is default
-        kwargs.setdefault('max', None)
-        super().__init__(**kwargs)
-
-    def set(self, value):
-        value = min(max(value, self.min), self.max)
-        super().set(value)
-
-    @property
-    def max(self):
-        if self._max is None:
-            return self.default
-        return self._max
-
-    @max.setter
-    def max(self, value):
-        if hasattr(self, '_max') and self._max is None:
-            self.default = value
-        else:
-            self._max = value
-
-    def __getstate__(self):
-        state = super().__getstate__()
-        if self._max is None:
-            del state['max']
-        return state
-
-class StatHelper:
-    class Value(int):
-        def __new__(cls, stat):
-            return super().__new__(cls, stat.value)
-        def __init__(self, stat):
-            object.__setattr__(self, 'stat', stat)
-        def __getattr__(self, name):
-            return getattr(self.stat, name)
-        def __setattr__(self, name, value):
-            setattr(self.stat, name, value)
-
-    def __init__(self, name, cls=Stat):
-        self.attr = '_' + name
-        self.cls = cls
-        self.values_names = {'{}_{}'.format(name, attr): attr for attr in cls.__attributes__}
-        self.values_names[name] = 'value'
-
-    def _get(self, instance):
-        return getattr(instance, self.attr)
-
+class Stat:
+    is_attribute = False
     def __get__(self, instance, owner):
         if instance is None:
             return self
-        return self.Value(self._get(instance))
-
+        return self.__iget__(instance)
+    def __iget__(self, instance):
+        raise NotImplementedError
     def __set__(self, instance, value):
-        self._get(instance).set(value)
+        raise AttributeError("can't set attribute")
+    def defaults(self, kwargs):
+        pass
+    @property
+    def attributes(self):
+        return ()
+
+class ValueStat(Stat):
+    is_attribute = True
+    def __init__(self, attr):
+        super().__init__()
+        self.attr = attr
+    def __iget__(self, instance):
+        return getattr(instance, self.attr)
+    def __set__(self, instance, value):
+        setattr(instance, self.attr, value)
+
+class MinMaxStat(ValueStat):
+    def __init__(self, attr, min=None, max=None):
+        super().__init__(attr)
+        self.min = min
+        self.max = max
+    @staticmethod
+    def check(instance, value, ref_value, func):
+        if ref_value is not None:
+            if isinstance(ref_value, str):
+                # no check if ref_value is not set in instance
+                ref_value = getattr(instance, ref_value, value)
+            value = func(value, ref_value)
+        return value
+    def __set__(self, instance, value):
+        value = self.check(instance, value, self.min, max)
+        value = self.check(instance, value, self.max, min)
+        super().__set__(instance, value)
 
 class StatsMeta(GObjectMeta):
     def __new__(cls, name, bases, dict):
-        attributes = []
-        helpers = {}
+        attributes = set(dict.pop('__attributes__', ()))
+        stats = set(dict.pop('__stats__', ()))
         for base in bases:
             if isinstance(base, cls):
-                helpers.update(base.__stat_helpers__)
-        for key, value in dict.items():
-            if isinstance(value, StatHelper):
-                helpers[key] = value
-                attributes.append(value.attr)
-        dict['__attributes__'] = dict.get('__attributes__', ()) + tuple(attributes)
-        dict['__stat_helpers__'] = helpers
+                stats.update(base.__stats__)
+        for attr, value in dict.items():
+            if isinstance(value, Stat):
+                if value.is_attribute:
+                    attributes.add(attr)
+                attributes.update(value.attributes)
+                stats.add(attr)
+        dict['__attributes__'] = attributes
+        dict['__stats__'] = stats
         return super().__new__(cls, name, bases, dict)
 
+@meta.apply
 class BaseStats(GObject, metaclass=StatsMeta):
     @classmethod
     def from_values(cls, **kwargs):
-        stats = {}
-        for stat_helper in cls.__stat_helpers__.values():
-            items = stat_helper.values_names.items() # [('hp', 'value'), ('hp_min', 'min'), ...]
-            stat_kwargs = {attr: kwargs.pop(name) for name, attr in items if name in kwargs}
-            if stat_kwargs:
-                stats[stat_helper.attr] = stat_helper.cls(**stat_kwargs)
-        #return cls(**stats, **kwargs)
-        kwargs.update(stats)
+        for stat_name in cls.__stats__:
+            stat = getattr(cls, stat_name)
+            # __stats__ contains all Stat instances, but not only
+            if isinstance(stat, Stat):
+                stat.defaults(kwargs)
         return cls(**kwargs)
 
     @property
     def values(self):
-        "{'hp': 50, ...}"
-        return {attr: getattr(self, attr) for attr in self.__stat_helpers__}
+        "Visible stats of the beast"
+        return {stat: getattr(self, stat) for stat in self.__stats__}
 
     def apply(self, stats):
         for key, value in stats.items():
-            #setattr(self, key, getattr(self, key) + diff)
             setattr(self, key, value)
 
+@meta.apply
 class Stats(BaseStats):
-    hp = StatHelper('hp', MinMaxStat)
+    hp = MinMaxStat('_hp', min=0)
+
+    @property
+    def hp_coef(self):
+        return min(self.hp, 1)
+
+class StatsRef:
+    def __init__(self, cls, **kwargs):
+        self.cls = cls
+        self.kwargs = kwargs
+
+    def stats(self):
+        return self.cls.from_values(**self.kwargs)

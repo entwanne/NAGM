@@ -12,8 +12,6 @@ class Attack(GObject):
         for b, beast in (('s', sender), ('r', receiver)):
             for stat, value in beast.stats.values.items():
                 ctx['{}_{}'.format(b, stat)] = value
-                for attr in value.__attributes__:
-                    ctx['{}_{}_{}'.format(b, stat, attr)] = getattr(value, attr)
 
         effects = {'r': {}, 's': {}}
         for attr, form in self.effects.items():

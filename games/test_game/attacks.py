@@ -20,7 +20,7 @@ def E(**kwargs):
     return dic
 
 mimi_queue = Attack(name='Mimi-queue', type=normal,
-                    effects=E(r_dfse_sub=Cond(Var('r_dfse') > (Var('r_dfse_default') - 10), 2, 0)))
+                    effects=E(r_dfse_sub=1))
 charge = Attack(name='Charge', type=normal, effects=E(r_hp_sub=10*att*typ))
 griffe = Attack(name='Griffe', type=normal, effects=E(r_hp_sub=10*att*typ))
 fouet_lianes = Attack(name='Fouet lianes', type=plante, effects=E(r_hp_sub=20*att*typ))

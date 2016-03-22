@@ -84,10 +84,10 @@ class Battle(BaseMap):
         print('{} uses {}'.format(sname, att.name))
         for stat_name in seffects:
             stat = getattr(sbeast.stats, stat_name)
-            print('* {}.{}: {}/{}'.format(sname, stat_name, stat, stat.default))
+            print('* {}.{}: {}'.format(sname, stat_name, stat))
         for stat_name in reffects:
             stat = getattr(rbeast.stats, stat_name)
-            print('* {}.{}: {}/{}'.format(rname, stat_name, stat, stat.default))
+            print('* {}.{}: {}'.format(rname, stat_name, stat))
 
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast
