@@ -83,6 +83,10 @@ class BaseStats(GObject, metaclass=StatsMeta):
         for key, value in stats.items():
             setattr(self, key, value)
 
+    def recompute(self):
+        'Recompute stats (after a battle)'
+        pass
+
 @meta.apply
 class Stats(BaseStats):
     hp = MinMaxStat('_hp', min=0)

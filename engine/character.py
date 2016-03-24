@@ -104,3 +104,7 @@ class Trainer(Character):
     def battle_step(self, use, beast):
         att = random.choice(beast.attacks)
         self.send(use, att, beast)
+
+    def end_battle(self):
+        for beast in self.beasts:
+            beast.stats.recompute()

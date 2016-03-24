@@ -94,6 +94,7 @@ class Battle(BaseMap):
 
     def end(self):
         for trainer in self.trainers:
+            trainer.end_battle()
             trainer.battle = None
             trainer.pop_ghost()
 

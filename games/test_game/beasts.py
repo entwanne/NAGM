@@ -34,7 +34,17 @@ class Stats(engine.stats.Stats):
     def hp_coef(self):
         return self.hp / self.hp_default
 
-    # + method to win ev & reset bonus after battle
+    def recompute(self):
+        # ou remplacer par système de contextes avec fin
+        # une attaque peut metre en place un ctx, qui prendra fin dans x tours (ou à la fin du combat)
+        # -> mais plus difficile à gérer
+        # (difficile car par exemple, il faut garder une référence vers la beast en cours pour pouvoir appliquer l'opération inverse)
+        super().recompute()
+        self.att_bonus = 0
+        self.dfse_bonus = 0
+        # + set flag for evolution
+
+    # + method to win exp and ev when a beast is defeated
 
 refs = engine.stats.StatsRef(
     Stats,
