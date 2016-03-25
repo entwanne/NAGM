@@ -10,15 +10,16 @@ def add_player(game, name, map, position, *beasts_families):
     player = engine.player.Player(name=name, map=map, position=position)
     player.beastiary = engine.beast.Beastiary()
     player.beasts = [engine.beast.Beast.from_family(family) for family in beasts_families]
-    from .attacks import faux_chage, soin
+    from . import attacks
     for beast in player.beasts:
         beast.stats.att_iv = 15
         beast.stats.dfse_iv = 15
         beast.stats.hp_default = 1000
         beast.stats.hp = 1000
         beast.attacks.pop()
-        beast.attacks.append(faux_chage)
-        beast.attacks.append(soin)
+        #beast.attacks.append(attacks.faux_chage)
+        beast.attacks.append(attacks.abime)
+        beast.attacks.append(attacks.soin)
     game.players.append(player)
     game.events.append(player)
 
@@ -65,3 +66,55 @@ class Stats(engine.stats.Stats):
         # + set flag for evolution
 
     # + method to win exp and ev when a beast is defeated
+
+# Move to engine.mixins/engine.helpers
+class Effect:
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __call__(self, attack, sender, target):
+        return True
+
+    @classmethod
+    def make(cls, func):
+        dic = {
+            '__qualname__': func.__qualname__,
+            '__module__': func.__module__,
+            '__call__': func,
+        }
+        return type(func.__name__, (cls,), dic)
+
+@Effect.make
+def precision(effect, attack, sender, target):
+    if random.random() < effect.prec:
+        return True
+    print('but failed')
+    return False
+
+@Effect.make
+def stat(effect, attack, sender, target):
+    value = getattr(target.stats, effect.stat)
+    setattr(target.stats, effect.stat, value + effect.value)
+    print('{}.{} = {}'.format(target.name, effect.stat, getattr(target.stats, effect.stat)))
+    return True
+
+@Effect.make
+def heal(effect, attack, sender, target):
+    target.stats.hp += effect.heal
+    print('{}.hp = {}'.format(target.name, target.stats.hp))
+    return True
+
+@Effect.make
+def offensive(effect, attack, sender, target):
+    typ = attack.type.over(target.type)
+    att = sender.stats.att / target.stats.dfse
+    target.stats.hp -= int(effect.force * typ * att)
+    print('{}.hp = {}'.format(target.name, target.stats.hp))
+    return True
+
+def faux_chage_effect(attack, sender, target):
+    if target.stats.hp > 1:
+        target.stats.hp = max(target.stats.hp - 40, 1)
+    else:
+        target.stats.hp = 0

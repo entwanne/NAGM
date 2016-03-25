@@ -9,6 +9,7 @@ class Type(GObject):
         kwargs.setdefault('relations', {})
         super().__init__(**kwargs)
 
+    # Move relations handler in games.test_game ?
     def set_over(self, rtype, mul):
         self.relations[rtype] = mul
 

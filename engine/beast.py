@@ -41,11 +41,8 @@ class Beast(Character):
     def ko(self):
         return self.stats.hp == 0
 
-    def attack(self, att, beast):
-        return att.use(self, beast)
-
-    def apply_stats(self, stats):
-        self.stats.apply(stats)
+    def attack(self, att, target):
+        return att.use(self, target)
 
 @meta.apply
 class Beastiary(Object):

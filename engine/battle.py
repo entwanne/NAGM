@@ -75,19 +75,12 @@ class Battle(BaseMap):
         return cls.spawn(trainers=trainers, beasts=beasts)
 
     def attack(self, sbeast, att):
-        i = self.beasts.index(sbeast)
-        rbeast = self.beasts[not i]
-        seffects, reffects = sbeast.attack(att, rbeast)
-
-        sname = sbeast.name + (' (ennemy)' if i else '')
-        rname = rbeast.name + ('' if i else ' (ennemy)')
-        print('{} uses {}'.format(sname, att.name))
-        for stat_name in seffects:
-            stat = getattr(sbeast.stats, stat_name)
-            print('* {}.{}: {}'.format(sname, stat_name, stat))
-        for stat_name in reffects:
-            stat = getattr(rbeast.stats, stat_name)
-            print('* {}.{}: {}'.format(rname, stat_name, stat))
+        if att.reflexive:
+            tbeast = sbeast
+        else:
+            i = self.beasts.index(sbeast)
+            tbeast = self.beasts[not i]
+        sbeast.attack(att, tbeast)
 
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast
