@@ -13,6 +13,7 @@ import os.path
 
 if os.path.exists('game.save'):
     game = engine.game.Game.load('game.save')
+    # + error if modules from game are loaded (except game.defs) ?
 else:
     game = game_mod.init_game()
 
