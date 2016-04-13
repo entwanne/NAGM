@@ -24,9 +24,11 @@ class Player(Trainer):
     def battle_step(self, use, beast):
         attacks = ((att.name, callback(self.send, use, att, beast)) for att in beast.attacks)
         attacks_cb = callback(Choice.spawn, self, *attacks)
+        bag_items = ((obj.name, callback(self.send, use, obj, beast)) for obj in self.bag)
+        bag_cb = callback(Choice.spawn, self, *bag_items)
         beasts = ((b.name, callback(self.send, use, b, beast)) for b in self.beasts)
         beasts_cb = callback(Choice.spawn, self, *beasts)
-        Choice.spawn(self, 'Attack', attacks_cb, 'Beasts', beasts_cb, 'Fuite', callback(self.send, use, None, beast))
+        Choice.spawn(self, 'Attack', attacks_cb, 'Bag', bag_cb, 'Beasts', beasts_cb, 'Fuite', callback(self.send, use, None, beast))
 
     @property
     def moveable(self):

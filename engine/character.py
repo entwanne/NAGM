@@ -92,10 +92,11 @@ class Character(Event):
 class Trainer(Character):
     "All trainers (playable or not)"
 
-    __attributes__ = ('beasts',)
+    __attributes__ = ('beasts', 'bag')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('beasts', [])
+        kwargs.setdefault('bag', [])
         super().__init__(**kwargs)
 
     def battle_step(self, use, beast):

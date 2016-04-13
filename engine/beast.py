@@ -51,6 +51,7 @@ class Beastiary(Object):
     __attributes__ = ('families', 'beasts')
 
     def __init__(self, **kwargs):
+        kwargs.setdefault('name', type(self).__name__)
         kwargs.setdefault('families', []) # found families
         kwargs.setdefault('beasts', []) # catched beasts
         super().__init__(**kwargs)

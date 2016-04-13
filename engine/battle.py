@@ -1,5 +1,6 @@
 from .gobject import GObject
 from .character import Trainer
+from .object import Object
 from . import meta
 from .signals import sighandler
 from .map import BaseMap
@@ -82,6 +83,9 @@ class Battle(BaseMap):
             tbeast = self.beasts[not i]
         sbeast.attack(att, tbeast)
 
+    def object(self, trainer, beast, obj):
+        obj.use(trainer, beast)
+
     def change(self, old_beast, new_beast):
         self.beasts[self.beasts.index(old_beast)] = new_beast
 
@@ -93,12 +97,14 @@ class Battle(BaseMap):
 
     def step(self, game):
         if len(self.trainer_actions) == len(self.trainers):
-            for action, beast in self.trainer_actions.values():
+            for trainer, (action, beast) in self.trainer_actions.items():
                 if action is None:
                     self.end()
                     return
                 elif isinstance(action, type(beast)):
                     self.change(beast, action)
+                elif isinstance(action, Object):
+                    self.object(trainer, beast, action)
                 else:
                     self.attack(beast, action)
             self.waiting = False
