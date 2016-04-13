@@ -7,7 +7,7 @@ class ActionEvent(engine.mixins.event.ActionEventCallback, engine.event.Event):
     pass
 
 def add_player(game, name, map, position, *beasts_families):
-    player = engine.player.Player(name=name, map=map, position=position)
+    player = engine.player.Player.spawn(name=name, map=map, position=position)
     player.beastiary = engine.beast.Beastiary()
     player.beasts = [engine.beast.Beast.from_family(family) for family in beasts_families]
     from . import attacks
@@ -20,8 +20,8 @@ def add_player(game, name, map, position, *beasts_families):
         #beast.attacks.append(attacks.faux_chage)
         beast.attacks.append(attacks.abime)
         beast.attacks.append(attacks.soin)
+    # do it with Player.spawn ?
     game.players.append(player)
-    game.events.append(player)
 
 import random
 

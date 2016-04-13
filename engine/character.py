@@ -1,5 +1,4 @@
 from .event import Event
-from . import event
 from . import meta
 
 import random
@@ -79,17 +78,15 @@ class Character(Event):
     def ghostify(self):
         if self.ghost:
             return
-        self.ghost = Ghost(position=self.position, direction=self.direction, map=self.map)
+        self.ghost = Ghost.spawn(position=self.position, direction=self.direction, map=self.map)
         self.map = None
-        event.events.append(self.ghost)
 
-    def pop_ghost(self):
+    def pop_ghost(self): # got better name (respawn ?)
         if not self.ghost:
             return
         ghost, self.ghost = self.ghost, None
         self.map, self.position, self.direction = ghost.map, ghost.position, ghost.direction
-        ghost.map = None
-        event.events.remove(ghost)
+        ghost.remove()
 
 @meta.apply
 class Trainer(Character):

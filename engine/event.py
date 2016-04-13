@@ -14,6 +14,18 @@ class Event(GObject):
         kwargs.setdefault('map', None)
         super().__init__(**kwargs)
 
+    @classmethod
+    def spawn(cls, **kwargs):
+        event = cls(**kwargs)
+        events.append(event)
+        return event
+
+    # + method to set map at None ?
+
+    def remove(self):
+        self.map = None
+        events.remove(self)
+
     @property
     def position(self):
         return (self.x, self.y, self.z)
