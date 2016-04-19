@@ -99,10 +99,11 @@ class Trainer(Character):
         kwargs.setdefault('bag', [])
         super().__init__(**kwargs)
 
-    def battle_step(self, use, beast):
-        att = random.choice(beast.attacks)
-        self.send(use, att, beast)
+    def battle_step(self, view):
+        att = random.choice(view.beast.attacks)
+        self.send(view.attack, att)
 
     def end_battle(self):
         for beast in self.beasts:
             beast.stats.recompute()
+        self.pop_ghost()

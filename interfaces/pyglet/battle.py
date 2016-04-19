@@ -30,16 +30,12 @@ class _:
                            )
             )
 
-    def attack(self, *args, **kwargs):
-        super().attack(*args, **kwargs)
-        for beast, bar in zip(self.beasts, self.__health_bars):
+    def execute(self, *args, **kwargs):
+        super().execute(*args, **kwargs)
+        for beast, sprite, bar in zip(self.beasts, self.__sprites, self.__health_bars):
+            sprite.image = beast.family.pyglet_img
             x, y, *_ = bar.vertices
             bar.vertices, bar.colors = get_bar(x, y, beast.stats.hp_coef)
-
-    def change(self, *args, **kwargs):
-        super().change(*args, **kwargs)
-        for beast, sprite in zip(self.beasts, self.__sprites):
-            sprite.image = beast.family.pyglet_img
 
     def get_translation(self, window, player):
         return 0, 0

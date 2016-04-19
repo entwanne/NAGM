@@ -68,6 +68,7 @@ class Stats(engine.stats.Stats):
     # + method to win exp and ev when a beast is defeated
 
 # Move to engine.mixins/engine.helpers
+# -> rename to ParamEffect ?
 class Effect:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -78,6 +79,8 @@ class Effect:
 
     @classmethod
     def make(cls, func):
+        "Create a new effect-class inheriting from Effect and having its proper __call_ behaviour"
+        # remove function from Effect class and add it to the effect/mixin module ?
         dic = {
             '__qualname__': func.__qualname__,
             '__module__': func.__module__,
@@ -118,3 +121,16 @@ def faux_chage_effect(attack, sender, target):
         target.stats.hp = max(target.stats.hp - 40, 1)
     else:
         target.stats.hp = 0
+
+# Effects should raise an Useable.Exit exception to exit battle (ball, teleport, hurlement, ...)
+# Exit choice in battle menu can become an effect
+# Beast-switching can also be an effect
+# -> Add facility to create an Useable-Effect (which is an unseable and an effect at the same time) -> or just have some Useable instances exit and switch
+# exit and swith will be useables owned by battle instance
+
+@Effect.make
+def capture(effect, ball, sender, target):
+    # manage distance between sender and target
+    # (= ||sender.position - target.position||), or distance²
+    # -> by a precision effect ? (it would be reused for potions for example)
+    sender.beasts.append(target)

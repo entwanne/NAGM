@@ -22,6 +22,8 @@ def apply(cls):
 
 def register(name):
     def decorator(cls):
+        # + add possibility to patch a class several times ?
+        # (to add behaviours specific to a game, or to enable a nuzlock mode for example)
         registered[name] = cls
         return cls
     return decorator

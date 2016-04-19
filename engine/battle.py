@@ -5,6 +5,8 @@ from . import meta
 from .signals import sighandler
 from .map import BaseMap
 
+from collections import OrderedDict
+
 """
 IDÉES
 
@@ -35,6 +37,58 @@ Méthode `use` de l'attaque/objet pour l'utilisation en combat ?
 `use(battle, trainer, beast, target)`
 """
 
+class ExitBattleException(Exception):
+    pass
+class ExitBattle(GObject):
+    def use(self, sender, target):
+        raise ExitBattleException
+
+class SwitchBeastException(Exception):
+    pass
+class SwitchBeast(GObject):
+    def use(self, sender, beast):
+        raise SwitchBeastException(beast)
+
+class BattleView:
+    def __init__(self, battle, pos, adv_pos):
+        self.battle = battle
+        self.pos = pos
+        self.adv_pos = adv_pos
+
+    @property
+    def trainer(self):
+        return self.battle.trainers[self.pos]
+
+    @property
+    def beast(self):
+        return self.battle.beasts[self.pos]
+
+    @beast.setter
+    def beast(self, b):
+        self.battle.beasts[self.pos] = b
+
+    @property
+    def adv_trainer(self):
+        return self.battle.trainers[self.adv_pos]
+
+    @property
+    def adv_beast(self):
+        return self.battle.beasts[self.adv_pos]
+
+    def attack(self, att):
+        sender = self.beast
+        target = sender if att.reflexive else self.adv_beast
+        self.battle.actions[self] = (att, sender, target)
+
+    def object(self, obj, target):
+        self.battle.actions[self] = (obj, self.trainer, target)
+
+    def switch(self, beast):
+        self.battle.actions[self] = (SwitchBeast(), None, beast)
+
+    def exit(self):
+        self.battle.actions[self] = (ExitBattle(), None, None)
+
 @meta.apply
 class FakeTrainer(Trainer):
     def ghostify(self):
@@ -47,18 +101,22 @@ class FakeTrainer(Trainer):
 class Battle(BaseMap):
     "Battle between trainers"
 
-    __attributes__ = ('trainers', 'beasts', 'trainer_actions', 'waiting')
+    __attributes__ = ('trainers', 'beasts', 'actions', 'waiting')
 
     def __init__(self, **kwargs):
-        kwargs['trainers'] = list(kwargs['trainers'])
-        kwargs['beasts'] = list(kwargs['beasts'])
-        kwargs.setdefault('trainer_actions', {})
+        kwargs.setdefault('actions', {})
         kwargs.setdefault('waiting', False)
         super().__init__(**kwargs)
+        if len(self.beasts) != len(self.trainers):
+            raise ValueError('beasts and trainers lists should have same size')
+        n = len(self.trainers)
+        self.views = [BattleView(self, i, (i + 1) % n) for i in range(n)]
 
     @classmethod
     def spawn(cls, **kwargs):
-        battle = cls(**kwargs)
+        #beasts = [trainer.beasts[0] for trainer in kwargs['trainers']]
+        beasts = [next(b for b in trainer.beasts if not b.ko) for trainer in kwargs['trainers']]
+        battle = cls(beasts=beasts, **kwargs)
         for i, trainer in enumerate(battle.trainers):
             trainer.ghostify()
             trainer.move(7 * i + 8, 7 * i + 2, 0, battle)
@@ -67,57 +125,47 @@ class Battle(BaseMap):
 
     @classmethod
     def from_args(cls, *args):
-        args = (
-            (obj, obj.beasts[0]) if isinstance(obj, Trainer)
-            else (FakeTrainer(beasts=[obj]), obj)
-            for obj in args
-        )
-        trainers, beasts = zip(*args)
-        return cls.spawn(trainers=trainers, beasts=beasts)
-
-    def attack(self, sbeast, att):
-        if att.reflexive:
-            tbeast = sbeast
-        else:
-            i = self.beasts.index(sbeast)
-            tbeast = self.beasts[not i]
-        sbeast.attack(att, tbeast)
-
-    def object(self, trainer, beast, obj):
-        obj.use(trainer, beast)
-
-    def change(self, old_beast, new_beast):
-        self.beasts[self.beasts.index(old_beast)] = new_beast
+        trainers = []
+        for obj in args:
+            if isinstance(obj, Trainer):
+                trainers.append(obj)
+            else:
+                trainers.append(FakeTrainer(beasts=[obj]))
+        return cls.spawn(trainers=trainers)
 
     def end(self):
         for trainer in self.trainers:
             trainer.end_battle()
-            trainer.battle = None
-            trainer.pop_ghost()
+
+    def execute(self):
+        # in the future, sort trainer_actions by sender.speed (or max speed if sender has no speed, e.g. sender is a trainer)
+        # speed is a stat, so particular to a game
+        # have a subclass of list to store actions, that will be extended by games (__iter__() -> sorted(__iter__())) or a method in Battle class to sort actions
+        # how to handle on which beast an effect is applied, without repetitions ?
+        for view, (action, sender, target) in self.actions.items():
+            try:
+                action.use(sender, target)
+            except SwitchBeastException as e:
+                # or no arg in exception and ask trainer to choose
+                # function to choose will be necessary when a beast faints
+                # or both (with arg when trainer choose to switch, without when switch is forced)
+                view.beast = e.args[0]
+        self.actions = {}
 
     def step(self, game):
-        if len(self.trainer_actions) == len(self.trainers):
-            for trainer, (action, beast) in self.trainer_actions.items():
-                if action is None:
-                    self.end()
-                    return
-                elif isinstance(action, type(beast)):
-                    self.change(beast, action)
-                elif isinstance(action, Object):
-                    self.object(trainer, beast, action)
-                else:
-                    self.attack(beast, action)
-            self.waiting = False
-            self.trainer_actions = {}
-        if any(beast.ko for beast in self.beasts if beast):
+        try:
+            if len(self.actions) == len(self.trainers):
+                self.execute()
+                self.waiting = False
+            # have an exception when a beast faints
+            # raised by a method of the Stat class ?
+            # (when trying to set hp to 0 -> exception)
+            # + better handling of all game exceptions
+            if any(beast.ko for beast in self.beasts if beast):
+                raise ExitBattleException
+            if not self.waiting:
+                self.waiting = True
+                for view in self.views:
+                    view.trainer.battle_step(view)
+        except ExitBattleException:
             self.end()
-            return
-        if not self.waiting:
-            self.trainer_actions = {}
-            self.waiting = True
-            for trainer, beast in zip(self.trainers, self.beasts):
-                trainer.battle_step(self.use, beast)
-
-    @sighandler
-    def use(self, game, trainer, action, beast):
-        self.trainer_actions[trainer] = action, beast

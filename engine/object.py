@@ -9,6 +9,11 @@ from . import meta
 # + methods proper to object (action when found on the map)
 # + quantities + player bag
 
+# objects must interact with map to know if they can be used
+# example: bicycle, road/city maps will say True, but not battles or houses
+# permet aussi de faire des bonus sympas, genre une ball utilisable sur une map normale (qui pourrait servir à attraper un pokémon invisible, hors combat)
+# pourrait permettre aussi de lister les pokémons présents sur la map et donc sujets à l'objet (pokéflûte par exemple)
+
 @meta.apply
 class Object(Useable, Event):
     "All objects (can be found on the map, put in the bag)"

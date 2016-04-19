@@ -41,9 +41,6 @@ class Beast(Character):
     def ko(self):
         return self.stats.hp == 0
 
-    def attack(self, att, target):
-        return att.use(self, target)
-
 @meta.apply
 class Beastiary(Object):
     "All catched beasts for a player"
