@@ -5,6 +5,8 @@ import os.path
 engine.resources.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'res')))
 
 def init_game():
+    'Function called to initialize a new game'
+
     from . import defs
 
     game = engine.game.Game()

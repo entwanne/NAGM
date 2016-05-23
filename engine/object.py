@@ -27,6 +27,7 @@ class Object(Useable, Event):
 
     @sighandler
     def actioned(self, game, player, map, pos):
+        'Find an object on a map'
         dialog.spawn(player, '{} got {}'.format(player.name, self.name))
-        self.remove()
+        self.remove() # remove object from the map
         player.bag.append(self)

@@ -31,12 +31,14 @@ class Zone(GObject):
         super().__init__(**kwargs)
 
     def random_beast(self):
+        'Get a random beast from a zone'
         weights_acc = list(itertools.accumulate(group.population for group in self.groups))
         x = random.random() * weights_acc[-1]
         family = self.groups[bisect.bisect(weights_acc, x)].family
         return Beast.from_family(family)
 
     def maybe_beast(self):
+        'Get a random beast or nothing'
         density = sum(group.population for group in self.groups) / self.area if self.area else 0
         if random.random() > density:
             return

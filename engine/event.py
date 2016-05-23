@@ -3,7 +3,9 @@ from . import meta
 
 @meta.apply
 class Event(GObject):
-    "All objects that can interact with player (on the map)"
+    '''All objects that can interact with player (on the map)
+    Events have a method `step` that is called at each iteration of the game loop
+    '''
 
     __attributes__ = ('position', 'map')
 
@@ -16,6 +18,7 @@ class Event(GObject):
 
     @classmethod
     def spawn(cls, **kwargs):
+        'Spawn an event on the game'
         event = cls(**kwargs)
         events.append(event)
         return event
@@ -23,6 +26,7 @@ class Event(GObject):
     # + method to set map at None ?
 
     def remove(self):
+        'Remove an event from the map/game'
         self.map = None
         events.remove(self)
 
@@ -36,6 +40,8 @@ class Event(GObject):
 
 @meta.apply
 class Timer(Event):
+    'Send a signal when a clock is finished'
+
     __attributes__ = ('clock', 'signal')
 
     def step(self, game):

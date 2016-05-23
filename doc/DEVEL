@@ -1,0 +1,22 @@
+Le projet NAGM est subdivisé en deux packages principaux, `engine` et `interfaces`
+
+# `engine`
+
+Ce package définit toutes les classes de base du jeu, sans aucune interaction avec l'interface graphique.
+Seuls sont décrits les comportements du jeu (signaux, gestion des déplacements, des combats, etc.)
+Chaque classe du jeu est décorée par `@meta.apply` qui permet d'appliquer automatiquement un mixin défini dans l'interface, pour étendre les fonctionnalités de la classe.
+
+La classe principale est la classe `Game`, qui définit un jeu. Elle comprend des `maps`, des `events` (objets/personnages sur les maps interagissant avec les utilisateurs) et des `players` (les joueurs sont aussi compris dans les `events`).
+
+À chaque itération du jeu, la méthode `step` de chacun des `events` présents sur l'une des cartes actuellement utilisées (où se trouve au moins un joueur) est appelée, permettant de déclencher certaines actions.
+
+Les cartes sont composées de tiles, qui interviennent lorsqu'un joueur se déplace ou utilise la touche action (les tiles sont considérés par la carte comme des événements à part entière).
+
+L'interaction entre classes du jeu se fait principalement par envoi/réception de signaux.
+
+# `interfaces`
+
+Les interfaces graphiques sont définies dans un package séparé, permettant d'avoir un moteur générique, ne dépendant d'aucune interface.
+Cela permet aussi de séparer la logique du cœur de la logique graphique.
+
+Chaque interface peut étendre les classes du moteur pour ajouter ses fonctionnalités liées à la GUI.

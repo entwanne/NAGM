@@ -50,6 +50,7 @@ class SwitchBeast(GObject):
         raise SwitchBeastException(beast)
 
 class BattleView:
+    '''A representation of the battle, with the pont of view of a specific trainer'''
     def __init__(self, battle, pos, adv_pos):
         self.battle = battle
         self.pos = pos
@@ -57,10 +58,12 @@ class BattleView:
 
     @property
     def trainer(self):
+        'Self trainer'
         return self.battle.trainers[self.pos]
 
     @property
     def beast(self):
+        'Current beast of the trainer'
         return self.battle.beasts[self.pos]
 
     @beast.setter
@@ -69,28 +72,35 @@ class BattleView:
 
     @property
     def adv_trainer(self):
+        'Adversary trainer'
         return self.battle.trainers[self.adv_pos]
 
     @property
     def adv_beast(self):
+        'Current beast of the adversary'
         return self.battle.beasts[self.adv_pos]
 
     def attack(self, att):
+        'Use an attack'
         sender = self.beast
         target = sender if att.reflexive else self.adv_beast
         self.battle.actions[self] = (att, sender, target)
 
     def object(self, obj, target):
+        'Use an object'
         self.battle.actions[self] = (obj, self.trainer, target)
 
     def switch(self, beast):
+        'Switch beast'
         self.battle.actions[self] = (SwitchBeast(), None, beast)
 
     def exit(self):
+        'Exit battle'
         self.battle.actions[self] = (ExitBattle(), None, None)
 
 @meta.apply
 class FakeTrainer(Trainer):
+    'Class used for wild beasts'
     def ghostify(self):
         pass
 
@@ -114,6 +124,7 @@ class Battle(BaseMap):
 
     @classmethod
     def spawn(cls, **kwargs):
+        'Create a new battle between two trainers, and move them to the battle'
         #beasts = [trainer.beasts[0] for trainer in kwargs['trainers']]
         beasts = [next(b for b in trainer.beasts if not b.ko) for trainer in kwargs['trainers']]
         battle = cls(beasts=beasts, **kwargs)
@@ -125,6 +136,7 @@ class Battle(BaseMap):
 
     @classmethod
     def from_args(cls, *args):
+        'Create a battle between trainers or beasts'
         trainers = []
         for obj in args:
             if isinstance(obj, Trainer):
@@ -134,10 +146,12 @@ class Battle(BaseMap):
         return cls.spawn(trainers=trainers)
 
     def end(self):
+        'End battle'
         for trainer in self.trainers:
             trainer.end_battle()
 
     def execute(self):
+        'Execute trainers actions'
         # in the future, sort trainer_actions by sender.speed (or max speed if sender has no speed, e.g. sender is a trainer)
         # speed is a stat, so particular to a game
         # have a subclass of list to store actions, that will be extended by games (__iter__() -> sorted(__iter__())) or a method in Battle class to sort actions
@@ -153,6 +167,7 @@ class Battle(BaseMap):
         self.actions = {}
 
     def step(self, game):
+        'Ask trainers the action they want to execute'
         try:
             if len(self.actions) == len(self.trainers):
                 self.execute()

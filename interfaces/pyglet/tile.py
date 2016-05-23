@@ -6,7 +6,9 @@ from .resources import grounds_texgrid, trees_texgrid, get_empty_tile
 @metareg('nagm.engine.tile.Tile')
 class _:
     img = None
-    def refresh(self, map, pos): pass
+    def compute_ui(self, map, pos):
+        'Compute UI texture coords'
+        pass
 
 @metareg('nagm.engine.tile.Grass')
 class _:
@@ -25,7 +27,7 @@ class _:
     __Y, __X = 47, 0
     __left = True
     __trunk = True
-    def refresh(self, map, pos):
+    def compute_ui(self, map, pos):
         x, y, z = pos
         xtile = map.get_tile((x - 1, y, z))
         if isinstance(xtile, engine.tile.Tree) and xtile.__left:
@@ -53,7 +55,7 @@ class _:
 @metareg('nagm.engine.tile.Stairs')
 class _:
     img = grounds_texgrid[49, 0]
-    def refresh(self, map, pos):
+    def compute_ui(self, map, pos):
         x, y, z = pos
         if (0, 1) in self.directions:
             self.img = grounds_texgrid[49, 7]
@@ -73,7 +75,7 @@ class _:
         (False, False, False, True): grounds_texgrid[43, 4],
     }
     img = grounds_texgrid[42, 4]
-    def refresh(self, map, pos):
+    def compute_ui(self, map, pos):
         x, y, z = pos
         nexts = tuple(not isinstance(map.get_tile((x + dx, y + dy, z)), engine.tile.Water)
                       for (dx, dy) in zip((-1, 1, 0, 0), (0, 0, -1, 1)))
@@ -82,8 +84,8 @@ class _:
 
 @metareg('nagm.engine.tile.Over')
 class _:
-    def refresh(self, map, pos):
+    def compute_ui(self, map, pos):
         for tile in self.tiles:
-            tile.refresh(map, pos)
+            tile.compute_ui(map, pos)
             if tile.img is not None:
                 self.img = tile.img

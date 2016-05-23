@@ -17,12 +17,13 @@ class BeastFamily(GObject):
 
 @meta.apply
 class Beast(Character):
-    "All beasts (can be moving on the map, in their balls, etc.)"
+    "All beasts are characters (can be moving on the map, in their balls, etc.)"
 
     __attributes__ = ('family', 'name', 'stats', 'attacks')
 
     @classmethod
     def from_family(cls, family, **kwargs):
+        'Create a beast copying attributes from its family'
         kwargs['family'] = family
         kwargs.setdefault('name', family.name)
         kwargs.setdefault('stats', family.stats_ref.stats())
@@ -39,6 +40,7 @@ class Beast(Character):
 
     @property
     def ko(self):
+        'True if hp stat is null'
         return self.stats.hp == 0
 
 @meta.apply

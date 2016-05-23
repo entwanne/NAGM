@@ -1,3 +1,7 @@
+'''Game definitions (classes/functions)
+Only this module should be loaded when using a game save
+'''
+
 from nagm import engine
 
 class BourgChar(engine.mixins.characters.Speaker, engine.mixins.characters.InfiniteWalker, engine.character.Character):

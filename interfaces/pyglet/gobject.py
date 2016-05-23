@@ -10,4 +10,5 @@ class _:
             self.invalidate_ui()
 
     def invalidate_ui(self):
+        'Ask to refresh object sprite (will call self.refresh_ui later)'
         self.to_refresh.append(self)

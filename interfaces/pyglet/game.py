@@ -31,6 +31,7 @@ class _:
 
     @property
     def ui_player(self):
+        'Get current player'
         if not self.__ui_player:
             self.__ui_player = self.players[0]
         return self.__ui_player

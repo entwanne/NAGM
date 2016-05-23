@@ -2,7 +2,7 @@ import pyglet
 from nagm.engine.meta import register as metareg
 
 class GroupsDict(dict):
-    "Dynamically add groups"
+    "Dynamically add pyglet groups"
     def __missing__(self, key):
         group = pyglet.graphics.OrderedGroup(key)
         self[key] = group
@@ -22,7 +22,7 @@ class _:
         for z, level in enumerate(self.tiles):
             for y, line in enumerate(level):
                 for x, tile in enumerate(line):
-                    tile.refresh(self, (x, y, z))
+                    tile.compute_ui(self, (x, y, z))
                     if tile.img is None:
                         continue
                     tile.sprite = pyglet.sprite.Sprite(

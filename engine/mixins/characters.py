@@ -4,6 +4,8 @@ from .. import dialog
 from .. import bind
 
 class InfiniteWalker:
+    'A Character that infinitly walks on the map'
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__n = 0
@@ -18,6 +20,8 @@ class InfiniteWalker:
             self.turn(-dy, dx)
 
 class Speaker(GObject):
+    'A character that speaks each time it is actioned'
+
     __attributes__ = ('dialogs', 'dialog_group')
     def __init__(self, **kwargs):
         kwargs.setdefault('dialogs', ())

@@ -1,6 +1,10 @@
 from .signals import sighandler, is_sighandler
 
 class Args:
+    """
+    Object representing (args, kwargs) of a function call
+    `n` contains the position of the last-bound argument
+    """
     def __init__(self, args, kwargs, n=0):
         self.args = args
         self.kwargs = kwargs
@@ -12,6 +16,7 @@ class Bind:
     Bound arguments will be evaluated when at callback calls
     """
     def bind(self, cargs):
+        'Bind value from call-parameters (cargs is an instance of Args)'
         pass
 
 class ArgBind(Bind):
@@ -59,11 +64,13 @@ class Callback:
 
     @classmethod
     def eval(cls, obj, cargs):
+        'Evaluate an argument (obj)'
         if isinstance(obj, Bind):
             return obj.bind(cargs)
         return obj
 
     def call(self, cargs):
+        'Evaluate parameters (bind) and call the function'
         f = self.eval(self.f, cargs)
         args = tuple(self.eval(arg, cargs) for arg in self.args)
         kwargs = {self.eval(k, cargs): self.eval(v, cargs) for (k, v) in self.kwargs.items()}
@@ -84,25 +91,35 @@ class SigCallback(Callback):
         return self.call(Args(args, kwargs, 2)) # 2 to pass game & sender in auto argbinds
 
 def callback(f, *args, **kwargs):
+    "Create a callback from a function (signal-callback if function is a sighandler)"
     if is_sighandler(f):
         return SigCallback(f, args, kwargs)
     return Callback(f, args, kwargs)
 cb = callback
 
 class SugarBind(ArgBind):
+    "Helpers to create bindings"
     def __getstate__(self):
         return {}
     def __setstate__(self, state):
         self.n = None
     def __getattr__(self, name):
+        "_.foo -> NamedBind('foo')"
         return NamedBind(name)
     def __getitem__(self, name):
+        '''_[1] -> ArgBind(1)
+        _['foo'] -> NamedBind('foo')
+        '''
         if isinstance(name, int):
             return ArgBind(name)
         if isinstance(name, str):
             return NamedBind(name)
         raise KeyError(name)
     def __call__(self, f, *args, **kwargs):
+        '''_(1) -> ArgBind(1)
+        _('foo') -> NamedBind('foo')
+        _(f, ...) -> BindCall(callback(f, ...))
+        '''
         if isinstance(f, int):
             return ArgBind(f)
         if isinstance(f, str):

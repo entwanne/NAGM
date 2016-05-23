@@ -17,7 +17,7 @@ class Ghost(Event):
 
 @meta.apply
 class Character(Event):
-    "All characters (can move)"
+    "All characters on a map (moveable events)"
 
     __attributes__ = ('direction', 'ghost', 'falling')
 
@@ -30,6 +30,7 @@ class Character(Event):
         super().__init__(**kwargs)
 
     def move(self, x, y, z=None, map=None):
+        'Try to move the character (change position)'
         if not self.moveable:
             return False
         if z is None:
@@ -48,17 +49,20 @@ class Character(Event):
         return True
 
     def turn(self, dx, dy):
+        'Try to turn the character (change direction)'
         if not self.moveable:
             return False
         self.direction = dx, dy
         return True
 
     def walk(self):
+        'Try to move character of 1 case in the current direction'
         if not self.map:
             return False
         return self.move(*self.map.walk_position(self.position, self.direction))
 
     def fall(self):
+        'Handle gravity: if there is nothing under the character, it falls'
         if self.falling:
             return
         self.falling = True
@@ -76,12 +80,14 @@ class Character(Event):
         return True
 
     def ghostify(self):
+        'Create a ghost of the character'
         if self.ghost:
             return
         self.ghost = Ghost.spawn(position=self.position, direction=self.direction, map=self.map)
         self.map = None
 
     def pop_ghost(self): # got better name (respawn ?)
+        "Delete the character's ghost"
         if not self.ghost:
             return
         ghost, self.ghost = self.ghost, None
@@ -90,7 +96,7 @@ class Character(Event):
 
 @meta.apply
 class Trainer(Character):
-    "All trainers (playable or not)"
+    "All trainers (playable or not), a Trainer is a Character with beasts"
 
     __attributes__ = ('beasts', 'bag')
 
@@ -100,10 +106,12 @@ class Trainer(Character):
         super().__init__(**kwargs)
 
     def battle_step(self, view):
+        'Called each time the trainer has to chose an action'
         att = random.choice(view.beast.attacks)
         self.send(view.attack, att)
 
     def end_battle(self):
+        'End a battle'
         for beast in self.beasts:
             beast.stats.recompute()
-        self.pop_ghost()
+        self.pop_ghost() # let Battle do that

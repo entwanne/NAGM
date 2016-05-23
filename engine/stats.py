@@ -3,6 +3,8 @@ from . import meta
 from .meta import GObjectMeta
 
 class Stat:
+    'Stat of a beast (descriptor)'
+
     is_attribute = False
     def __get__(self, instance, owner):
         if instance is None:
@@ -13,12 +15,14 @@ class Stat:
     def __set__(self, instance, value):
         raise AttributeError("can't set attribute")
     def defaults(self, kwargs):
+        'Set default value in kwargs parameter'
         pass
     @property
     def attributes(self):
         return ()
 
 class ValueStat(Stat):
+    'Stat associated with a numeric value'
     is_attribute = True
     def __init__(self, attr):
         super().__init__()
@@ -29,6 +33,7 @@ class ValueStat(Stat):
         setattr(instance, self.attr, value)
 
 class MinMaxStat(ValueStat):
+    'ValueStat with guards in case of overflows'
     def __init__(self, attr, min=None, max=None):
         super().__init__(attr)
         self.min = min
@@ -47,6 +52,7 @@ class MinMaxStat(ValueStat):
         super().__set__(instance, value)
 
 class StatsMeta(GObjectMeta):
+    'Helper to index stats of a Stats class'
     def __new__(cls, name, bases, dict):
         attributes = set(dict.pop('__attributes__', ()))
         stats = set(dict.pop('__stats__', ()))
@@ -65,8 +71,13 @@ class StatsMeta(GObjectMeta):
 
 @meta.apply
 class BaseStats(GObject, metaclass=StatsMeta):
+    '''Base class for referencing stats descriptors
+    A beast contains an unique BaseStats object
+    '''
+
     @classmethod
     def from_values(cls, **kwargs):
+        'Create Stats with default values for missing stats'
         for stat_name in cls.__stats__:
             stat = getattr(cls, stat_name)
             # __stats__ contains all Stat instances, but not only
@@ -80,6 +91,7 @@ class BaseStats(GObject, metaclass=StatsMeta):
         return {stat: getattr(self, stat) for stat in self.__stats__}
 
     def apply(self, stats):
+        'Apply stats variations'
         for key, value in stats.items():
             setattr(self, key, value)
 
@@ -89,6 +101,8 @@ class BaseStats(GObject, metaclass=StatsMeta):
 
 @meta.apply
 class Stats(BaseStats):
+    'Beast stats (contains HP stat)'
+
     hp = MinMaxStat('_hp', min=0)
 
     @property
@@ -96,6 +110,8 @@ class Stats(BaseStats):
         return min(self.hp, 1)
 
 class StatsRef:
+    'Helper to create stats from default values'
+
     def __init__(self, cls, **kwargs):
         self.cls = cls
         self.kwargs = kwargs

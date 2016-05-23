@@ -11,6 +11,8 @@ class Ground(Enum):
     WATER = 1
 
 class TileMeta(meta.GObjectMeta):
+    'Metaclass for all tiles (for type-checking)'
+
     def __instancecheck__(self, tile):
         if super().__instancecheck__(tile):
             return True

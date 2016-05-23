@@ -5,6 +5,8 @@ from . import bind
 
 @meta.apply
 class Dialog(GObject):
+    'Dialogs sent to a player'
+
     __attributes__ = ('group',)
     persistent = True
 
@@ -14,6 +16,7 @@ class Dialog(GObject):
 
     @classmethod
     def spawn(cls, player, **kwargs):
+        'Spawn a dialog to a player'
         dialog = cls(**kwargs)
         if dialog.group is not None:
             dialog.group.add(dialog)
@@ -22,11 +25,16 @@ class Dialog(GObject):
 
     @sighandler
     def action(self, game, player):
+        'Action executed whn the player closes the dialog'
         if self.group is not None:
             self.group.remove(self)
 
 @meta.apply
 class Action(Dialog):
+    '''Dialog with a callback
+    Actions are not persistent, so they are immediatly closed (callback is called just after the action is spawned)
+    '''
+
     __attributes__ = ('callback',)
     persistent = False
 
@@ -41,6 +49,8 @@ class Action(Dialog):
 
 @meta.apply
 class Message(Dialog):
+    'Dialog with a text message'
+
     __attributes__ = ('msg',)
 
     @classmethod
@@ -49,6 +59,8 @@ class Message(Dialog):
 
 @meta.apply
 class Choice(Dialog):
+    'Choice between several options (each option has a label and a callback)'
+
     __attributes__ = ('labels', 'callbacks', 'current')
 
     def __init__(self, **kwargs):
@@ -73,6 +85,7 @@ class Choice(Dialog):
             callback(game, player, self.current)
 
 def spawn(player, *dialogs, group=None):
+    'Helper to spawn a message/choice/action'
     for dialog in dialogs:
         if callable(dialog):
             Action.spawn(player, dialog, group=group)
@@ -82,10 +95,14 @@ def spawn(player, *dialogs, group=None):
             Message.spawn(player, dialog, group=group)
 
 class DialogGroupSpawner(set):
+    'A group is a set of dialogs, used to know which dialogs are active'
+
     def spawn(self, *args, **kwargs):
+        'Spawn a new dialog in this group'
         return spawn(*args, group=self, **kwargs)
 
     def callback(self, *args, **kwargs):
+        'Callback to spawn a dialog in the group'
         return bind.callback(
             self.spawn,
             bind._[1], # player

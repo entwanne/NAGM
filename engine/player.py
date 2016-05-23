@@ -15,6 +15,7 @@ class Player(Trainer):
         super().__init__(**kwargs)
 
     def action(self):
+        "Action-button"
         if self.dialogs:
             self.pop_dialogs(True)
         elif self.map:
@@ -40,14 +41,20 @@ class Player(Trainer):
 
     @property
     def dialog(self):
+        'Next dialog on the queue'
         if self.dialogs:
             return self.dialogs[0]
 
     def add_dialog(self, dialog):
+        'Attach a new dialog'
         self.dialogs.append(dialog)
         self.pop_dialogs()
 
     def pop_dialogs(self, actioned=False):
+        '''Pop next dialogs on the queue
+        Always pop first dialog if `æctioned` is True
+        Pop all non-persistent dialog at the top of the queue
+        '''
         while self.dialogs and (actioned or not self.dialogs[0].persistent):
             actioned = False
             self.send(self.dialogs.pop(0).action)
