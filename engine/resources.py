@@ -14,5 +14,5 @@ def get(name):
     'Get path of a resource'
     fullpath = exists(name)
     if fullpath is None:
-        raise FileNotFoundError('Resource {} not found'.format(repr(name)))
+        raise FileNotFoundError('Resource {!r} not found'.format(name))
     return fullpath
