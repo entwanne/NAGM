@@ -80,10 +80,9 @@ class BattleView:
         'Current beast of the adversary'
         return self.battle.beasts[self.adv_pos]
 
-    def attack(self, att):
+    def attack(self, att, target):
         'Use an attack'
         sender = self.beast
-        target = sender if att.reflexive else self.adv_beast
         self.battle.actions[self] = (att, sender, target)
 
     def object(self, obj, target):

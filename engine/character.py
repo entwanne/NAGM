@@ -108,7 +108,7 @@ class Trainer(Character):
     def battle_step(self, view):
         'Called each time the trainer has to chose an action'
         att = random.choice(view.beast.attacks)
-        self.send(view.attack, att)
+        self.send(view.attack, att, (view.beast if att.reflexive else view.adv_beast))
 
     def end_battle(self):
         'End a battle'

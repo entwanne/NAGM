@@ -60,6 +60,6 @@ def init_game():
         )
     )
 
-    engine.object.Object.spawn(map=bourg, position=(3, 5, 0), name='Potion', effects=(defs.heal(heal=50),))
+    engine.object.Object.spawn(map=bourg, position=(3, 5, 0), name='Potion', effects=(defs.heal(heal=50),), reflexive=True)
     engine.object.Object.spawn(map=bourg, position=(4, 5, 0), name='Ball', effects=(defs.capture(),))
     return game

@@ -7,10 +7,11 @@ class Useable(GObject):
     It has several effects that are applied each time the useable is used
     '''
 
-    __attributes__ = ('name', 'effects')
+    __attributes__ = ('name', 'effects', 'reflexive')
 
     def __init__(self, **kwargs):
         kwargs.setdefault('effects', ())
+        kwargs.setdefault('reflexive', False)
         return super().__init__(**kwargs)
 
     def use(self, sender, target):
@@ -29,8 +30,4 @@ class Useable(GObject):
 @meta.apply
 class Attack(Useable):
     'An Attack is a Useable that have a type and can be reflexive (target = sender)'
-    __attributes__ = ('type', 'reflexive')
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault('reflexive', False)
-        return super().__init__(**kwargs)
+    __attributes__ = ('type',)

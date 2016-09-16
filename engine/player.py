@@ -23,14 +23,11 @@ class Player(Trainer):
 
     def battle_step(self, view):
         beast = view.beast
-        #attacks = ((att.name, callback(self.send, view.use, att, beast)) for att in beast.attacks)
-        attacks = ((att.name, callback(self.send, view.attack, att)) for att in beast.attacks)
+        adv_beast = view.adv_beast
+        attacks = ((att.name, callback(self.send, view.attack, att, (beast if att.reflexive else adv_beast))) for att in beast.attacks)
         attacks_cb = callback(Choice.spawn, self, *attacks)
-        #bag_items = ((obj.name, callback(self.send, view.use, obj, beast)) for obj in self.bag)
-        bag_items = ((obj.name, callback(self.send, view.object, obj, beast)) for obj in self.bag)
+        bag_items = ((obj.name, callback(self.send, view.object, obj, (beast if obj.reflexive else adv_beast))) for obj in self.bag)
         bag_cb = callback(Choice.spawn, self, *bag_items)
-        #beasts = ((b.name, callback(self.send, view.use, b, beast)) for b in self.beasts)
-        #beasts = ()
         beasts = ((b.name, callback(self.send, view.switch, b)) for b in self.beasts)
         beasts_cb = callback(Choice.spawn, self, *beasts)
         Choice.spawn(self, 'Attack', attacks_cb, 'Bag', bag_cb, 'Beasts', beasts_cb, 'Fuite', callback(self.send, view.exit))
